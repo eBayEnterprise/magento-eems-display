@@ -1,2 +1,1 @@
-EbayEnterprise Marketing Solutions Affiliate
-
+eBay Enterprise Marketing Solutions Affiliate Integration
