@@ -21,7 +21,7 @@
 	</testsuite>
 	<groups>
 		<include>
-			<group>EbayEnterprise_Affiliate</group>
+			<group>EbayEnterprise_Display</group>
 		</include>
 	</groups>
 	<filter>

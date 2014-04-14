@@ -12,13 +12,13 @@ cd build
 # Drop any existing tables without needing to drop the database.
 dropAllTables() {
 	local IFS=$'\n'
-	tables=( $(mysql --skip-column-names jenkins_mage_eems_affil -e 'show tables;') )
+	tables=( $(mysql --skip-column-names jenkins_mage_eems_display -e 'show tables;') )
 	IFS=';'
-	mysql jenkins_mage_eems_affil <<< "SET FOREIGN_KEY_CHECKS = 0;${tables[*]/#/DROP TABLE IF EXISTS };SET FOREIGN_KEY_CHECKS = 1;"
+	mysql jenkins_mage_eems_display <<< "SET FOREIGN_KEY_CHECKS = 0;${tables[*]/#/DROP TABLE IF EXISTS };SET FOREIGN_KEY_CHECKS = 1;"
 }
 dropAllTables
 
-# Fetch Magento ee and untar it.
+# Fetch Magento ce and untar it.
 mv magento magento.deleteme && rm magento.deleteme &
 	wget -o wget.log -O- https://ebay.box.com/s/q7qo0culoevfln411vhi |
 	tar -xzpf-
@@ -33,7 +33,7 @@ php -f install.php -- \
 	--admin_password 'testing123' \
 	--admin_username 'admin' \
 	--db_host 'localhost' \
-	--db_name 'jenkins_mage_eems_affil' \
+	--db_name 'jenkins_mage_eems_display' \
 	--db_pass "$(sed -n 's/password=//p' "$HOME/.my.cnf")" \
 	--db_user 'jenkins' \
 	--default_currency 'USD' \
