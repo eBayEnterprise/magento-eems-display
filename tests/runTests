@@ -1,0 +1,61 @@
+#!/bin/bash -e
+
+##
+# Set up ecomdev testing for EB2C
+#
+
+# Set up the Magento 'webroot' in the 'build' directory.
+mkdir -p build
+cd build
+
+##
+# Drop any existing tables without needing to drop the database.
+dropAllTables() {
+	local IFS=$'\n'
+	tables=( $(mysql --skip-column-names jenkins_mage_eems_affil -e 'show tables;') )
+	IFS=';'
+	mysql jenkins_mage_eems_affil <<< "SET FOREIGN_KEY_CHECKS = 0;${tables[*]/#/DROP TABLE IF EXISTS };SET FOREIGN_KEY_CHECKS = 1;"
+}
+dropAllTables
+
+# Fetch Magento ee and untar it.
+mv magento magento.deleteme && rm magento.deleteme &
+	wget -o wget.log -O- https://ebay.box.com/s/q7qo0culoevfln411vhi |
+	tar -xzpf-
+
+cd magento
+# Run the Magento installer.
+php -f install.php -- \
+	--admin_frontname 'admin' \
+	--admin_email 'foo@bar.com' \
+	--admin_firstname 'First' \
+	--admin_lastname 'Last' \
+	--admin_password 'testing123' \
+	--admin_username 'admin' \
+	--db_host 'localhost' \
+	--db_name 'jenkins_mage_eems_affil' \
+	--db_pass "$(sed -n 's/password=//p' "$HOME/.my.cnf")" \
+	--db_user 'jenkins' \
+	--default_currency 'USD' \
+	--license_agreement_accepted 'yes' \
+	--locale 'en_US' \
+	--secure_base_url 'https://example.com' \
+	--session_save 'files' \
+	--timezone 'America/New_York' \
+	--url 'http://example.com' \
+	--use_rewrites 'yes' \
+	--use_secure 'yes' \
+	--use_secure_admin 'yes' \
+	--skip_url_validation 'yes'
+
+# Initialize the extensions via modman
+modman init
+modman link --copy "$(cd ../.. && pwd)" # PHPUnit does not respect symlinks.
+modman clone --copy https://github.com/kojiromike/EcomDev_PHPUnit.git
+
+# Set up the phpunit configurations
+cp ../../tests/local.xml.phpunit app/etc # Magento configuration
+cp ../../tests/phpunit.xml.dist . # PHPUnit configuration
+
+# Run phpunit
+phpunit "$@" # This argument list should usually be empty, but can be switched to --debug or other flags for quick checks. Such as when phpunit suddenly starts segfaulting on Jenkins.
