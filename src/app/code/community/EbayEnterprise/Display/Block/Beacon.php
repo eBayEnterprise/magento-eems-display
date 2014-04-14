@@ -179,7 +179,7 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 	public function getBeaconUrl()
 	{
 		$params = $this->_getParamsByPageType();
-		$url = $this->_getRequestScheme() . "://pixel.fetchback.com/serve/fb/pdc?" . http_build_query($params);
+		$url = $this->_getRequestScheme() . "://pixel.fetchback.com/serve/fb/pdj?" . http_build_query($params);
 		return $url;
 	}
 

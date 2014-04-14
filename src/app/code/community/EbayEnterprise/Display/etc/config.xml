@@ -39,6 +39,15 @@
 				</eems_display>
 			</updates>
 		</layout>
+		<routers>
+			<eems_display_feed>
+				<use>standard</use>
+				<args>
+					<module>EbayEnterprise_Display</module>
+					<frontName>eemsDisplayProductFeed</frontName>
+				</args>
+			</eems_display_feed>
+		</routers>
 	</frontend>
 	<crontab>
 		<jobs>
