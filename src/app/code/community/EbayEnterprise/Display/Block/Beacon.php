@@ -1,11 +1,5 @@
 <?php
-/**
- * @category    TrueAction
- * @package     TrueAction_Fetchback
- * @copyright   Copyright (c) 2012 True Action Network (http://www.trueaction.com)
- */
-
-class TrueAction_Fetchback_Block_Beacon extends Mage_Core_Block_Template
+class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 {
 	protected $_order; // The order
 
@@ -102,7 +96,7 @@ class TrueAction_Fetchback_Block_Beacon extends Mage_Core_Block_Template
 	{
 		return array(
 			'cat' => '',
-			'sid' => $this->helper('fetchback')->getMerchantId(),
+			'sid' => $this->helper('display')->getMerchantId(),
 			'name' => 'landing',
 		);
 	}
@@ -194,6 +188,6 @@ class TrueAction_Fetchback_Block_Beacon extends Mage_Core_Block_Template
 	 */
 	public function showBeacon()
 	{
-		return Mage::helper('fetchback')->isEnabled();
+		return Mage::helper('display')->isEnabled();
 	}
 }

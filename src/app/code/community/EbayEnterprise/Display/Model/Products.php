@@ -1,11 +1,5 @@
 <?php
-/**
- * @category  TrueAction
- * @package   TrueAction_Fetchback
- * @copyright Copyright (c) 2012 True Action Network (http://www.trueaction.com)
- */
-
-class TrueAction_Fetchback_Model_Products extends Mage_Core_Model_Abstract
+class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 {
 
 	const FEED_NAME = 'PRODUCT';
@@ -26,7 +20,7 @@ class TrueAction_Fetchback_Model_Products extends Mage_Core_Model_Abstract
 		foreach(Mage::app()->getStores(true) as $storeView) {
 			if (!$helper->isEnabled($storeView)) continue;
 
-			$storeCode = $helper->getMerchantId($storeView);
+			$storeCode = $helper->getSiteId($storeView);
 			// Get data to send.
 			$data = $this->_getProductData($storeView);
 			if ($data) {
@@ -44,6 +38,7 @@ class TrueAction_Fetchback_Model_Products extends Mage_Core_Model_Abstract
 				fclose($file);
 			}
 		}
+		// @TODO: New spec reads that we're providing a URL rather than transferring a file.
 		foreach ($paths as $path) {
 			// Upload the csv file.
 			try {
@@ -76,7 +71,7 @@ class TrueAction_Fetchback_Model_Products extends Mage_Core_Model_Abstract
 			} catch (Exception $e) {}
 			$data[] = array(
 				$product->getId(),                          // ProductId
-				Mage::helper('fetchback')->getMerchantId(), // StoreCode
+				Mage::helper('fetchback')->getSiteId(), // StoreCode
 				$product->getProductUrl(),                  // ProductURL
 				$product->getName(),                        // LongTitle
 				$product->getPrice(),                       // Price

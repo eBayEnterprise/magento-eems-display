@@ -1,19 +1,14 @@
 <?php
-/**
- * @category    TrueAction
- * @package     TrueAction_Fetchback
- * @copyright   Copyright (c) 2012 True Action Network (http://www.trueaction.com)
- */
-
-class TrueAction_Fetchback_Helper_Data extends Mage_Core_Helper_Abstract
+class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 {
-
-	const FETCHBACK_CONFIG_ENABLED     = 'advertising_marketing/fetchback/enabled';
-	const FETCHBACK_CONFIG_MERCHANT_ID = 'advertising_marketing/fetchback/merchant_id';
-	const FETCHBACK_CONFIG_FTP_HOST    = 'advertising_marketing/fetchback/ftp_host';
-	const FETCHBACK_CONFIG_FTP_USER    = 'advertising_marketing/fetchback/ftp_username';
-	const FETCHBACK_CONFIG_FTP_PASS    = 'advertising_marketing/fetchback/ftp_password';
-	const FETCHBACK_CONFIG_FTP_PORT    = 'advertising_marketing/fetchback/ftp_port';
+	const DISPLAY_CONFIG_ENABLED  = 'ebayenterprise/display/enabled';
+	const DISPLAY_CONFIG_SITE_ID  = 'ebayenterprise/display/merchant_id';
+	const DISPLAY_CONFIG_FTP_HOST = 'ebayenterprise/display/ftp_host';
+	const DISPLAY_CONFIG_FTP_USER = 'ebayenterprise/display/ftp_username';
+	const DISPLAY_CONFIG_FTP_PASS = 'ebayenterprise/display/ftp_password';
+	const DISPLAY_CONFIG_FTP_PORT = 'ebayenterprise/display/ftp_port';
+	// @TODO We need the Product Feed URL - somehow.
+	// @TODO The FTP stuff may not be necessary if we are publishing a URL
 
 	/**
 	 * Get whether or not this extension is enabled.
@@ -23,9 +18,10 @@ class TrueAction_Fetchback_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function isEnabled($storeView = null)
 	{
+		// @TODO Suspect code, getSiteId was passing '$storeViewId', which was an undefined variable
 		return (
-			Mage::getStoreConfigFlag(self::FETCHBACK_CONFIG_ENABLED, $storeView) &&
-			'' !== $this->getMerchantId($storeViewId)
+			Mage::getStoreConfigFlag(self::DISPLAY_CONFIG_ENABLED, $storeView) &&
+			'' !== $this->getSiteId($storeView)
 		);
 	}
 
@@ -35,9 +31,9 @@ class TrueAction_Fetchback_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @param Mage_Core_Model_Store $storeView
 	 * @return string
 	 */
-	public function getMerchantId($storeView = null)
+	public function getSiteId($storeView = null)
 	{
-		return Mage::getStoreConfig(self::FETCHBACK_CONFIG_MERCHANT_ID, $storeView);
+		return Mage::getStoreConfig(self::DISPLAY_CONFIG_SITE_ID, $storeView);
 	}
 
 	/**
@@ -48,7 +44,7 @@ class TrueAction_Fetchback_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getFtpUsername($storeView = null)
 	{
-		return Mage::getStoreConfig(self::FETCHBACK_CONFIG_FTP_USER, $storeView);
+		return Mage::getStoreConfig(self::DISPLAY_CONFIG_FTP_USER, $storeView);
 	}
 
 	/**
@@ -60,7 +56,7 @@ class TrueAction_Fetchback_Helper_Data extends Mage_Core_Helper_Abstract
 	public function getFtpPassword($storeView = null)
 	{
 		return Mage::helper('core')->decrypt(
-			Mage::getStoreConfig(self::FETCHBACK_CONFIG_FTP_PASS, $storeView)
+			Mage::getStoreConfig(self::DISPLAY_CONFIG_FTP_PASS, $storeView)
 		);
 	}
 
@@ -72,7 +68,7 @@ class TrueAction_Fetchback_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getFtpHost($storeView = null)
 	{
-		return Mage::getStoreConfig(self::FETCHBACK_CONFIG_FTP_HOST, $storeView);
+		return Mage::getStoreConfig(self::DISPLAY_CONFIG_FTP_HOST, $storeView);
 	}
 
 	/**
@@ -82,10 +78,12 @@ class TrueAction_Fetchback_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getFtpPort()
 	{
-		return Mage::getStoreConfig(self::FETCHBACK_CONFIG_FTP_PORT, $storeView);
+		// @TODO  - Suspicious code, we hadn't passed in $storeView??
+		return Mage::getStoreConfig(self::DISPLAY_CONFIG_FTP_PORT, $storeView);
 	}
 
 	/**
+	 * @TODO Do we even ftp at all? If not BOOM get rid of all this.
 	 * Put a local file on the remote ftp server for Fetchback.
 	 *
 	 * @param Mage_Core_Model_Store $storeView
