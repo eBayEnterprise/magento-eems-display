@@ -1,13 +1,22 @@
 
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+	<tabs>
+		<ebayenterprise translate="label" module="eems_display">
+			<label>eBay Enterprise</label>
+			<sort_order>550</sort_order>
+		</ebayenterprise>
+	</tabs>
 	<sections>
-		<ebay_enterprise translate="label">
-			<tab>eBay Enterprise</tab>
+		<marketing_solutions translate="label" module="eems_display">
+			<class>separator-top</class>
 			<label>Marketing Solutions</label>
+			<tab>ebayenterprise</tab>
+			<frontend_type>text</frontend_type>
+			<sort_order>550</sort_order>
 			<show_in_default>1</show_in_default>
-			<show_in_website>0</show_in_website>
-			<show_in_store>0</show_in_store>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
 			<groups>
 				<eems_display translate="label">
 					<fields>
