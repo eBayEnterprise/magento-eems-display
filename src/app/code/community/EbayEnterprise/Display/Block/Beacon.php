@@ -1,11 +1,5 @@
 <?php
-/**
- * @category    TrueAction
- * @package     TrueAction_Fetchback
- * @copyright   Copyright (c) 2012 True Action Network (http://www.trueaction.com)
- */
-
-class TrueAction_Fetchback_Block_Beacon extends Mage_Core_Block_Template
+class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 {
 	protected $_order; // The order
 
@@ -102,7 +96,7 @@ class TrueAction_Fetchback_Block_Beacon extends Mage_Core_Block_Template
 	{
 		return array(
 			'cat' => '',
-			'sid' => $this->helper('fetchback')->getMerchantId(),
+			'sid' => $this->helper('eems_display/config')->getSiteId(),
 			'name' => 'landing',
 		);
 	}
@@ -185,7 +179,7 @@ class TrueAction_Fetchback_Block_Beacon extends Mage_Core_Block_Template
 	public function getBeaconUrl()
 	{
 		$params = $this->_getParamsByPageType();
-		$url = $this->_getRequestScheme() . "://pixel.fetchback.com/serve/fb/pdc?" . http_build_query($params);
+		$url = $this->_getRequestScheme() . "://pixel.fetchback.com/serve/fb/pdj?" . http_build_query($params);
 		return $url;
 	}
 
@@ -194,6 +188,6 @@ class TrueAction_Fetchback_Block_Beacon extends Mage_Core_Block_Template
 	 */
 	public function showBeacon()
 	{
-		return Mage::helper('fetchback')->isEnabled();
+		return Mage::helper('eems_display/config')->isEnabled();
 	}
 }

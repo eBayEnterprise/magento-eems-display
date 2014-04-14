@@ -5,4 +5,57 @@
 			<version>1.0.0.0</version>
 		</EbayEnterprise_Display>
 	</modules>
+	<default>
+		<marketing_solutions>
+			<eems_display>
+				<product_feed_url>
+					http:://Some.Sensible.Url/GoesHere
+				</product_feed_url>
+			</eems_display>
+		</marketing_solutions>
+	</default>
+	<global>
+		<blocks>
+			<eems_display>
+				<class>EbayEnterprise_Display_Block</class>
+			</eems_display>
+		</blocks>
+		<helpers>
+			<eems_display>
+				<class>EbayEnterprise_Display_Helper</class>
+			</eems_display>
+		</helpers>
+		<models>
+			<eems_display>
+				<class>EbayEnterprise_Display_Model</class>
+			</eems_display>
+		</models>
+	</global>
+	<frontend>
+		<layout>
+			<updates>
+				<eems_display>
+					<file>eems_display.xml</file>
+				</eems_display>
+			</updates>
+		</layout>
+		<routers>
+			<eems_display_feed>
+				<use>standard</use>
+				<args>
+					<module>EbayEnterprise_Display</module>
+					<frontName>eemsDisplayProductFeed</frontName>
+				</args>
+			</eems_display_feed>
+		</routers>
+	</frontend>
+	<crontab>
+		<jobs>
+			<eems_display_products_feed>
+				<schedule><cron_expr>0 3 * * *</cron_expr></schedule>
+				<!-- @TODO This needs to be some sensible value! -->
+				<run><model>display/products::export</model></run>
+			</eems_display_products_feed>
+		</jobs>
+	</crontab>
 </config>
