@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2012 True Action Network (http://www.trueaction.com)
+ */
+-->
+<layout version="0.1.0">
+
+	<default translate="label">
+		<label>Default Layout</label>
+		<update handle="fetchback_beacon"/>
+	</default>
+	
+	<catalog_product_view>
+		<reference name="fetchback.beacon">
+			<action method="setPageType"><type>product</type></action>
+		</reference>
+	</catalog_product_view>
+
+	<checkout_cart_index>
+		<reference name="fetchback.beacon">
+			<action method="setPageType"><type>cart</type></action>
+		</reference>
+	</checkout_cart_index>
+
+	<checkout_onepage_success>
+		<reference name="fetchback.beacon">
+			<action method="setPageType"><type>checkout_success</type></action>
+		</reference>
+	</checkout_onepage_success>
+	
+	<checkout_multishipping_success>
+		<reference name="fetchback.beacon">
+			<action method="setPageType"><type>checkout_success</type></action>
+		</reference>
+	</checkout_multishipping_success>
+
+	<fetchback_beacon translate="label">
+		<reference name="before_body_end">
+			<block type="fetchback/beacon" name="fetchback.beacon" template="fetchback/beacon.phtml"/>
+		</reference>
+	</fetchback_beacon>
+
+</layout>

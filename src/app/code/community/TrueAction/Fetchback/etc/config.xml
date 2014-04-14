@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @category    TrueAction
+ * @package     TrueAction_Fetchback
+ * @copyright   Copyright (c) 2012 True Action Network (http://www.trueaction.com)
+ */
+-->
+<config>
+	<modules>
+		<TrueAction_Fetchback>
+			<version>1.0.1</version>
+		</TrueAction_Fetchback>
+	</modules>
+	<global>
+		<blocks>
+			<fetchback>
+				<class>TrueAction_Fetchback_Block</class>
+			</fetchback>
+		</blocks>
+		<helpers>
+			<fetchback>
+				<class>TrueAction_Fetchback_Helper</class>
+			</fetchback>
+		</helpers>
+		<models>
+			<fetchback>
+				<class>TrueAction_Fetchback_Model</class>
+			</fetchback>
+		</models>
+	</global>
+	<frontend>
+		<layout>
+			<updates>
+				<fetchback>
+					<file>fetchback.xml</file>
+				</fetchback>
+			</updates>
+		</layout>
+	</frontend>
+	<adminhtml>
+		<layout>
+			<updates>
+				<fetchback>
+					<file>fetchback.xml</file>
+				</fetchback>
+			</updates>
+		</layout>
+	</adminhtml>
+	<admin>
+		<routers>
+			<adminhtml>
+				<args>
+					<modules>
+						<TrueAction_Fetchback before="Mage_Adminhtml">TrueAction_Fetchback_Adminhtml</TrueAction_Fetchback>
+					</modules>
+				</args>
+			</adminhtml>
+		</routers>
+	</admin>
+	<default>
+		<advertising_marketing>
+			<fetchback>
+				<registration>
+					<target_capability_name>Fetchback</target_capability_name>
+					<legal_agreement_url><![CDATA[http://www.fetchback.com/terms.html]]></legal_agreement_url>
+				</registration>
+			</fetchback>
+		</advertising_marketing>
+	</default>
+	<crontab>
+		<jobs>
+			<fetchback_order_batch>
+				<schedule><cron_expr>0 3 * * *</cron_expr></schedule>
+				<run><model>fetchback/products::transmitBatch</model></run>
+			</fetchback_order_batch>
+		</jobs>
+	</crontab>
+</config>
