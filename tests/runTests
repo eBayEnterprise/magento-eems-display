@@ -21,7 +21,7 @@ dropAllTables
 # Fetch Magento ce and untar it.
 mv magento magento.deleteme && rm magento.deleteme &
 	wget -o wget.log -O- https://ebay.box.com/s/q7qo0culoevfln411vhi |
-	tar -xzpf-
+	tar -xJpf-
 
 cd magento
 # Run the Magento installer.
