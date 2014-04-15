@@ -5,7 +5,7 @@
     <resources>
       <default_setup>
         <connection>
-          <dbname>jenkins_mage_eems_affil</dbname>
+          <dbname>jenkins_mage_eems_displ</dbname>
         </connection>
       </default_setup>
     </resources>

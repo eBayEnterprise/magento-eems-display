@@ -12,9 +12,9 @@ cd build
 # Drop any existing tables without needing to drop the database.
 dropAllTables() {
 	local IFS=$'\n'
-	tables=( $(mysql --skip-column-names magento -e 'show tables;') )
+	tables=( $(mysql --skip-column-names jenkins_mage_eems_displ -e 'show tables;') )
 	IFS=';'
-	mysql magento <<< "SET FOREIGN_KEY_CHECKS = 0;${tables[*]/#/DROP TABLE IF EXISTS };SET FOREIGN_KEY_CHECKS = 1;"
+	mysql jenkins_mage_eems_displ <<< "SET FOREIGN_KEY_CHECKS = 0;${tables[*]/#/DROP TABLE IF EXISTS };SET FOREIGN_KEY_CHECKS = 1;"
 }
 dropAllTables
 
@@ -33,7 +33,7 @@ php -f install.php -- \
 	--admin_password 'testing123' \
 	--admin_username 'admin' \
 	--db_host 'localhost' \
-	--db_name 'magento' \
+	--db_name 'jenkins_mage_eems_displ' \
 	--db_pass "$(sed -n 's/password=//p' "$HOME/.my.cnf")" \
 	--db_user 'jenkins' \
 	--default_currency 'USD' \
