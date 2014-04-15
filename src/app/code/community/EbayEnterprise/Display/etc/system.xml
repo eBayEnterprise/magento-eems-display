@@ -17,7 +17,7 @@
 			<show_in_website>1</show_in_website>
 			<show_in_store>1</show_in_store>
 			<groups>
-				<display translate="label">
+				<eems_display translate="label">
 					<label>Display</label>
 					<frontend_type>text</frontend_type>
 					<sort_order>1</sort_order>
@@ -34,26 +34,26 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</enabled>
-						<site_id translate="label">
-							<label>Site Id</label>
-							<comment><![CDATA[Contact dl-ebayent-displaysupport@ebay.com, or call (888) 343-6411 ext. 4 to obtain your Site Id]]></comment>
-							<frontend_type>text</frontend_type>
-							<sort_order>200</sort_order>
-							<show_in_default>1</show_in_default>
-							<show_in_website>1</show_in_website>
-							<show_in_store>1</show_in_store>
-						</site_id>
-						<product_feed-url translate="label">
-							<label>Product Feed URL</label>
-							<comment><![CDATA[Provide this link to eBay Enterprise Display to enable up-to-date product information]]></comment>
-							<frontend_type>text</frontend_type>
-							<sort_order>300</sort_order>
-							<show_in_default>1</show_in_default>
-							<show_in_website>1</show_in_website>
-							<show_in_store>1</show_in_store>
-						</product_feed-url>
+					   <site_id translate="label">
+                            <label>Site Id</label>
+                            <comment><![CDATA[Contact dl-ebayent-displaysupport@ebay.com, or call (888) 343-6411 ext. 4 to obtain your Site Id]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </site_id>
+                        <product_feed_url translate="label">
+                            <label>Product Feed URL</label>
+                            <comment><![CDATA[Provide this link to eBay Enterprise Display to enable up-to-date product information]]></comment>
+                            <frontend_type>link</frontend_type>
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </product_feed_url>
 					</fields>
-				</display>
+				</eems_display>
 			</groups>
 		</marketing_solutions>
 	</sections>

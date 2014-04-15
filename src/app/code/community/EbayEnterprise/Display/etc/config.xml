@@ -5,58 +5,48 @@
 			<version>1.0.0.0</version>
 		</EbayEnterprise_Display>
 	</modules>
+	<default>
+		<marketing_solutions>
+			<eems_display>
+				<product_feed_url>
+					http:://Some.Sensible.Url/GoesHere
+				</product_feed_url>
+			</eems_display>
+		</marketing_solutions>
+	</default>
 	<global>
 		<blocks>
-			<display>
+			<eems_display>
 				<class>EbayEnterprise_Display_Block</class>
-			</display>
+			</eems_display>
 		</blocks>
 		<helpers>
-			<display>
+			<eems_display>
 				<class>EbayEnterprise_Display_Helper</class>
-			</display>
+			</eems_display>
 		</helpers>
 		<models>
-			<display>
+			<eems_display>
 				<class>EbayEnterprise_Display_Model</class>
-			</display>
+			</eems_display>
 		</models>
 	</global>
 	<frontend>
 		<layout>
 			<updates>
-				<display>
-					<file>display.xml</file>
-				</display>
+				<eems_display>
+					<file>eems_display.xml</file>
+				</eems_display>
 			</updates>
 		</layout>
 	</frontend>
-	<adminhtml>
-		<layout>
-			<updates>
-				<display>
-					<file>display.xml</file>
-				</display>
-			</updates>
-		</layout>
-	</adminhtml>
-	<admin>
-		<routers>
-			<adminhtml>
-				<args>
-					<modules>
-						<EbayEnterprise_Display before="Mage_Adminhtml">EbayEnterprise_Display_Adminhtml</EbayEnterprise_Display>
-					</modules>
-				</args>
-			</adminhtml>
-		</routers>
-	</admin>
 	<crontab>
 		<jobs>
-			<display_products_feed>
+			<eems_display_products_feed>
 				<schedule><cron_expr>0 3 * * *</cron_expr></schedule>
+				<!-- @TODO This needs to be some sensible value! -->
 				<run><model>display/products::export</model></run>
-			</display_products_feed>
+			</eems_display_products_feed>
 		</jobs>
 	</crontab>
 </config>

@@ -96,7 +96,7 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 	{
 		return array(
 			'cat' => '',
-			'sid' => $this->helper('display')->getMerchantId(),
+			'sid' => $this->helper('eems_display/config')->getSiteId(),
 			'name' => 'landing',
 		);
 	}
@@ -188,6 +188,6 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 	 */
 	public function showBeacon()
 	{
-		return Mage::helper('display')->isEnabled();
+		return Mage::helper('eems_display/config')->isEnabled();
 	}
 }

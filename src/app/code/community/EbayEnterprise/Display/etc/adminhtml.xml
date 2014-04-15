@@ -8,10 +8,10 @@
 						<children>
 							<config>
 								<children>
-									<ebay_enterprise translate="title">
-										<title>eBay Enterprise</title>
-										<sort_order>100</sort_order>
-									</ebay_enterprise>
+									<marketing_solutions translate="title">
+										<title>Marketing Solutions</title>
+										<sort_order>20</sort_order>
+									</marketing_solutions>
 								</children>
 							</config>
 						</children>

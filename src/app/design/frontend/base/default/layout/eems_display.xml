@@ -3,37 +3,37 @@
 
 	<default translate="label">
 		<label>Default Layout</label>
-		<update handle="display_beacon"/>
+		<update handle="eems_display_beacon"/>
 	</default>
 	
 	<catalog_product_view>
-		<reference name="display.beacon">
+		<reference name="eems_display.beacon">
 			<action method="setPageType"><type>product</type></action>
 		</reference>
 	</catalog_product_view>
 
 	<checkout_cart_index>
-		<reference name="display.beacon">
+		<reference name="eems_display.beacon">
 			<action method="setPageType"><type>cart</type></action>
 		</reference>
 	</checkout_cart_index>
 
 	<checkout_onepage_success>
-		<reference name="display.beacon">
+		<reference name="eems_display.beacon">
 			<action method="setPageType"><type>checkout_success</type></action>
 		</reference>
 	</checkout_onepage_success>
 	
 	<checkout_multishipping_success>
-		<reference name="display.beacon">
+		<reference name="eems_display.beacon">
 			<action method="setPageType"><type>checkout_success</type></action>
 		</reference>
 	</checkout_multishipping_success>
 
-	<display_beacon translate="label">
+	<eems_display_beacon translate="label">
 		<reference name="before_body_end">
-			<block type="display/beacon" name="display.beacon" template="display/beacon.phtml"/>
+			<block type="eems_display/beacon" name="eems_display.beacon" template="eems_display/beacon.phtml"/>
 		</reference>
-	</display_beacon>
+	</eems_display_beacon>
 
 </layout>

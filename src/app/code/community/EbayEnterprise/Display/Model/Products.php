@@ -1,59 +1,8 @@
 <?php
 class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 {
-
-	const FEED_NAME = 'PRODUCT';
-	const FILE_MASK = 0777; // FIXME: RESET TO 0774 BEFORE RELEASE
-
 	/**
-	 * Collate and transmit the day's products to Fetchback.
-	 */
-	public function transmitBatch()
-	{
-		Mage::log('Fetchback transmitBatch triggered.');
-
-		$helper    = Mage::helper('fetchback');
-		$dateStamp = gmdate('Ymd');
-		$paths = array();
-		// TODO: Make sure this doesn't send multiple batches of the
-		//       same catalog of orders when there are multiple stores.
-		foreach(Mage::app()->getStores(true) as $storeView) {
-			if (!$helper->isEnabled($storeView)) continue;
-
-			$storeCode = $helper->getSiteId($storeView);
-			// Get data to send.
-			$data = $this->_getProductData($storeView);
-			if ($data) {
-				// Compile that data into a CSV file.
-				$path = $helper->normal_paths(
-					Mage::getBaseDir('var'),
-					'fetchback',
-					'archive',
-					// <PARTNER_ID>_<FEEDNAME>_YYYYMMDD.txt
-					sprintf('%s_%d_%s.txt', $storeCode, self::FEED_NAME, $dateStamp)
-				);
-				@mkdir(dirname($path), self::FILE_MASK, true);
-				$file = fopen($path, 'a');
-				foreach($data as $csvline) fputcsv($file, $csvline);
-				fclose($file);
-			}
-		}
-		// @TODO: New spec reads that we're providing a URL rather than transferring a file.
-		foreach ($paths as $path) {
-			// Upload the csv file.
-			try {
-				$helper->ftpPutFile($path);
-				rename($path, $path . '-sent');
-			}
-			catch (Exception $e) {
-				Mage::logException($e);
-			}
-		}
-		Mage::log('Fetchback transmitBatch complete.');
-	}
-
-	/**
-	 * Compile the order data for Fetchback into
+	 * Compile the product data for Fetchback into
 	 * an array that can be put into a CSV.
 	 *
 	 * @param Mage_Core_Model_Store $store
@@ -67,15 +16,21 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		foreach($products as $product) {
 			$productImageUrl = '';
 			try {
+				// @TODO: Set to 150x150 size:
 				$productImageUrl = $product->getImageUrl();
-			} catch (Exception $e) {}
+			} catch (Exception $e) {
+				/*
+				@TODO: Either log something, or write a comment that we specifically are ignoring 
+				this exception.
+				*/
+			}
 			$data[] = array(
-				$product->getId(),                          // ProductId
-				Mage::helper('fetchback')->getSiteId(), // StoreCode
-				$product->getProductUrl(),                  // ProductURL
-				$product->getName(),                        // LongTitle
-				$product->getPrice(),                       // Price
-				$productImageUrl                            // ProductImageURL
+				$product->getId(),                                // ProductId
+				Mage::helper('eems_display/config')->getSiteId(), // StoreCode
+				$product->getProductUrl(),                        // ProductURL
+				$product->getName(),                              // LongTitle
+				$product->getPrice(),                             // Price
+				$productImageUrl                                  // ProductImageURL
 			);
 		}
 		return $data;
