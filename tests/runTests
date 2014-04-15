@@ -20,7 +20,7 @@ dropAllTables
 
 # Fetch Magento ce and untar it.
 mv magento magento.deleteme && rm magento.deleteme &
-	wget -o wget.log -O- https://ebay.box.com/s/q7qo0culoevfln411vhi |
+	wget -o wget.log -O- https://ebay.box.com/shared/static/qqusfdoxncska4r1lkeu.xz |
 	tar -xJpf-
 
 cd magento
