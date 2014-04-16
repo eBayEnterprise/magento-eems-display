@@ -11,11 +11,12 @@ class EbayEnterprise_Display_Block_Adminhtml_System_Config_Form_Field_Feedurl
 {
 	protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
 	{
-		$element->addClass('textarea');
-		$html = '<textarea id="' . $element->getHtmlId()
+		$element->addClass('text');
+		$html = '<div id="' . $element->getHtmlId()
 					. '" name="'.$element->getName()
-					.'" ' . ' placeholder="' . $element->getEscapedValue() . '" >'
-					. "</textarea>";
+					. '" ><b>' .
+							$element->getEscapedValue()
+					. "</b></div>";
 		return $html;
 	}
 }

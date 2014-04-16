@@ -1,4 +1,7 @@
 <?php
+/**
+ * @codeCoverageIgnore
+ */
 class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 {
 	const EEMS_DISPLAY_CONFIG_ENABLED_PATH                = 'marketing_solutions/eems_display/enabled';

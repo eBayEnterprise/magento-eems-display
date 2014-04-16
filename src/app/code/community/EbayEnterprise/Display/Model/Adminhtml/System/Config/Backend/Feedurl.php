@@ -3,28 +3,18 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 	extends Mage_Core_Model_Config_Data
 {
 	const SESSION_KEY = 'adminhtml/session';
-
-	/**
-	 * Get the value for the request parameter 'param'
-	 * @param type $param
-	 * @return type
-	 */
-	protected function _getParam($param)
-	{
-		return Mage::app()->getRequest()->getParam($param);
-	}
 	/**
 	 * Return store Id for the current configuration scope
 	 * @return string
 	 */
 	protected function _getStoreIdForCurrentScope()
 	{
-		$storeCode = $this->_getParam('store');
+		$storeCode = Mage::app()->getRequest()->getParam('store');
 		if (!empty($storeCode)) {
 			return Mage::getModel('core/store')->load($storeCode)->getId();
 		}
 
-		$websiteCode = $this->_getParam('website');
+		$websiteCode = Mage::app()->getRequest()->getParam('website');
 		if (empty($websiteCode)) {
 			return Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID;
 		}
@@ -54,7 +44,7 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 //			$sess->addWarning($helper->__("No Site Id configured for current scope."));
 			$sess->addWarning("No Site Id configured for current scope.");
 		} else {
-			$productFeedUrl = $storeUrl . $frontName . '/store/' . $storeId;
+			$productFeedUrl = $storeUrl . $frontName . '/index/retrieve?id=' . $storeId;
 		}
 		$this->setValue($productFeedUrl);
 		return $this;
