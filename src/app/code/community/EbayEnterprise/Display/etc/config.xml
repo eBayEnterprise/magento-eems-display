@@ -5,15 +5,7 @@
 			<version>1.0.0.0</version>
 		</EbayEnterprise_Display>
 	</modules>
-	<default>
-		<marketing_solutions>
-			<eems_display>
-				<product_feed_url>
-					http:://Some.Sensible.Url/GoesHere
-				</product_feed_url>
-			</eems_display>
-		</marketing_solutions>
-	</default>
+	<default />
 	<global>
 		<blocks>
 			<eems_display>
@@ -40,13 +32,13 @@
 			</updates>
 		</layout>
 		<routers>
-			<eems_display_feed>
+			<eems_display>
 				<use>standard</use>
 				<args>
 					<module>EbayEnterprise_Display</module>
 					<frontName>eemsDisplayProductFeed</frontName>
 				</args>
-			</eems_display_feed>
+			</eems_display>
 		</routers>
 	</frontend>
 	<crontab>

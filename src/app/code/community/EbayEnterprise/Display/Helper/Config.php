@@ -1,16 +1,16 @@
 <?php
 class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 {
-	const EEMS_DISPLAY_CONFIG_ENABLED          = 'marketing_solutions/eems_display/enabled';
-	const EEMS_DISPLAY_CONFIG_SITE_ID          = 'marketing_solutions/eems_display/site_id';
-	const EEMS_DISPLAY_CONFIG_PRODUCT_FEED_URL = 'marketing_solutions/eems_display/product_feed_url';
+	const EEMS_DISPLAY_CONFIG_ENABLED_PATH                = 'marketing_solutions/eems_display/enabled';
+	const EEMS_DISPLAY_CONFIG_SITE_ID_PATH                = 'marketing_solutions/eems_display/site_id';
+	const EEMS_DISPLAY_CONFIG_PRODUCT_FEED_FRONTNAME_PATH = 'frontend/routers/eems_display/args/frontName';
 	/**
 	 * Get whether or not this extension is enabled.
 	 * @return boolean
 	 */
 	public function isEnabled($storeId)
 	{
-		return Mage::getStoreConfigFlag(self::EEMS_DISPLAY_CONFIG_ENABLED, $storeId);
+		return Mage::getStoreConfigFlag(self::EEMS_DISPLAY_CONFIG_ENABLED_PATH, $storeId);
 	}
 	/**
 	 * Get the SiteId from admin configuration.
@@ -18,14 +18,14 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	 */
 	public function getSiteId($storeId)
 	{
-		return Mage::getStoreConfig(self::EEMS_DISPLAY_CONFIG_SITE_ID, $storeId);
+		return Mage::getStoreConfig(self::EEMS_DISPLAY_CONFIG_SITE_ID_PATH, $storeId);
 	}
 	/**
-	 * Get the Product Feed URL
+	 * Gets the frontName of the router for the Display feed controller 
 	 * @return string
 	 */
-	public function getProductFeedUrl($storeId)
+	public function getProductFeedFrontName()
 	{
-		return Mage::getStoreConfig(self::EEMS_DISPLAY_CONFIG_PRODUCT_FEED_URL, $storeId);
+		return Mage::getConfig()->getNode(self::EEMS_DISPLAY_CONFIG_PRODUCT_FEED_FRONTNAME_PATH);
 	}
 }
