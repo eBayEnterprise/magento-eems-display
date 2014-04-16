@@ -1,4 +1,6 @@
 # EEMS Affiliate
 src/app/code/community/EbayEnterprise/* app/code/community/EbayEnterprise/
 src/app/etc/modules/*.xml app/etc/modules/
+src/app/design/frontend/base/default/layout/*.xml app/design/frontend/base/default/layout/
+src/app/design/frontend/base/default/template/* app/design/frontend/base/default/template/
 
