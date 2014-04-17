@@ -16,13 +16,19 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	}
 	/**
 	 * Puts an array of data into a file pointed to by fileHandle
-	 * @param $fileHandle
+	 * @param $outputFileName (full path)
 	 * @param $dataRows
 	 * @return self
 	 */
-	protected function _putCsvRows($fileHandle, $dataRows) {
-		foreach ($dataRows as $row) {
-			fputcsv( $fileHandle, $row, self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
+	protected function _createCsvFile($outputFileName, $dataRows) {
+		$fh = fopen($outputFileName, 'w');
+		if ($fh == false) {
+			Mage::log('Cannot open file for writing: ' . $outputFileName);
+		} else {
+			foreach ($dataRows as $row) {
+				fputcsv( $fh, $row, self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
+			}
+			fclose($fh);
 		}
 		return $this;
 	}
@@ -42,17 +48,11 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 				continue;
 			}
 			$outputFileName = $dirName . DS . $storeId . '.csv';
-			$fh = @fopen($outputFileName, 'w');
-			if ($fh == false) {
-				Mage::log('Cannot open file for writing: ' . $outputFileName);
-				continue;
-			}
 			$rows = array_merge(
 				array($this->_getProductDataHeader()),
 				$this->_getProductData($storeId)
 			);
-			$this->_putCsvRows($fh, $rows);
-			fclose($fh);
+			$this->_createCsvFile($outputFileName, $rows);
 		}
 		return $this;
 	}
@@ -74,32 +74,48 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		return array('Id', 'Name', 'Description', 'Price', 'Image URL', 'Page URL');
 	}
 	/**
+	 * Gets the product image URL, ensuring that it gets resized
+	 * @return image url, or blank if we can't get if figured out
+	 */
+	protected function _getResizedImage($product, $storeId)
+	{
+		$helper = Mage::helper('eems_display/config');
+		try {
+			// Image implementation doesn't save the resize filed unless it's coerced into
+			// a string. Its (php) magic '__toString()' method is what actually resizes and saves
+			$imageUrl = (string)Mage::helper('catalog/image')
+				->init($product, 'image')
+				->keepAspectRatio(
+					$helper->getFeedImageKeepAspectRatio($storeId)
+				)
+				->resize(
+					$helper->getFeedImageWidth($storeId),
+					$helper->getFeedImageHeight($storeId)
+				);
+		} catch (Exception $e) {
+			$imageUrl = '';
+			Mage::log('Error sizing Image URL for ' . $product->getSku(), $e->getMessage());
+		}
+		return $imageUrl;
+	}
+	/**
 	 * Compile the product data for Fetchback into
 	 * an array that can be put into a CSV.
 	 * @return array
 	 */
 	protected function _getProductData($storeId)
 	{
-		$data = array();
-		$products = $this->_getProductCollection($storeId=null);
+		$data     = array();
+		$products = $this->_getProductCollection($storeId);
 		foreach($products as $collectedProduct) {
 			$product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($collectedProduct->getId());
-			try {
-				// @TODO Image Resizing.
-				// Do we have to do something like this?:
-				// http://magento.stackexchange.com/questions/2827/product-image-cache-image-resizing
-				$productImageUrl = $product->getImageUrl(); // @TODO: Set to 150x150 size
-			} catch (Exception $e) {
-				$productImageUrl = '';
-				Mage::log('Error sizing Image URL for ' . $product->getSku(), $e->getMessage());
-			}
 			$data[] = array(
-				$product->getSku(),              // "Id"
-				$product->getName(),             // "Name"
-				$product->getShortDescription(), // "Description"
-				$product->getPrice(),            // "Price"
-				$productImageUrl,                // "Image URL"
-				$product->getProductUrl(),       // "Page URL"
+				$product->getSku(),                          // "Id"
+				$product->getName(),                         // "Name"
+				$product->getShortDescription(),             // "Description"
+				$product->getPrice(),                        // "Price"
+				$this->_getResizedImage($product, $storeId), // "Image URL"
+				$product->getProductUrl(),                   // "Page URL"
 			);
 		}
 		return $data;

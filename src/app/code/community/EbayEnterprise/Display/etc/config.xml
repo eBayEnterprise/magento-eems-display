@@ -8,12 +8,23 @@
 	<default>
 		<marketing_solutions>
 			<eems_display>
+				<!-- These are values you can change in the admin interface: --> 
 				<!-- Disabled by default: -->
 				<enabled>0</enabled>
-				<!-- Path is relative to Mage::getBase('var'); -->
-				<feed_file_path>eems_display</feed_file_path>
 				<!-- Site Id provided by EEMS Display -->
 				<site_id></site_id>
+				<!-- Feed values you cannot change in the admin interface: -->
+				<feed>
+				<!-- Path is relative to Mage::getBase('var'); -->
+					<file_path>eems_display</file_path>
+					<image>
+						<!-- As per spec, 150x150: -->
+						<height>150</height>
+						<width>150</width>
+						<!-- 1 = do not distort, 150x150 is a constraint: --> 
+						<keep_aspect_ratio>1</keep_aspect_ratio>
+					</image>
+				</feed>
 			</eems_display>
 		</marketing_solutions>
 	</default>

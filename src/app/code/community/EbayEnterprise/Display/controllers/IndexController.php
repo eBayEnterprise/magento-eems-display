@@ -15,7 +15,7 @@ class EbayEnterprise_Display_IndexController extends Mage_Core_Controller_Front_
 		$storeId  = Mage::app()->getRequest()->getParam('id');
 		$store    = Mage::getModel('core/store')->load($storeId);
 		if (!$store->getId() || !$helper->getIsEnabled($storeId) || !$helper->getSiteId($storeId)) {
-			// Store is invalid, or not enabled for EEMS Disply, or there's no SiteId here.
+			// Store is invalid, or not enabled for EEMS Display, or there's no SiteId here.
 			$this->_sendNotFound();
 			return;
 		}
