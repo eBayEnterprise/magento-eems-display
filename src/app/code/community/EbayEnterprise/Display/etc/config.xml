@@ -63,7 +63,7 @@
 			<eems_display_products_feed>
 				<schedule><cron_expr>0 */3 * * *</cron_expr>
 				</schedule>
-				<run><model>display/products::export</model></run>
+				<run><model>eems_display/products::export</model></run>
 			</eems_display_products_feed>
 		</jobs>
 	</crontab>
