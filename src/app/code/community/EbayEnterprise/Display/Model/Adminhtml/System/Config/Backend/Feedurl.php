@@ -41,7 +41,6 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 
 		$siteId = $helper->getSiteId($storeId);
 		if (empty($siteId)) {
-//			$sess->addWarning($helper->__("No Site Id configured for current scope."));
 			$sess->addWarning("No Site Id configured for current scope.");
 		} else {
 			$productFeedUrl = $storeUrl . $frontName . '/index/retrieve?id=' . $storeId;

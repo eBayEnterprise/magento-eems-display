@@ -5,7 +5,6 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 
 	/**
 	 * Get the last order.
-	 *
 	 * @return Mage_Sales_Model_Order
 	 */
 	protected function _getOrder()
@@ -18,10 +17,8 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 		}
 		return $this->_order;
 	}
-
 	/**
 	 * Get the current customer quote
-	 *
 	 * @return Mage_Sales_Model_Quote
 	 */
 	protected function _getQuote()
@@ -31,10 +28,8 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 		}
 		return $this->_quote;
 	}
-
 	/**
 	 * Load a Quote object from an Order object
-	 *
 	 * @param Mage_Sales_Model_Order $order
 	 * @return Mage_Sales_Model_Quote
 	 */
@@ -45,17 +40,14 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 		}
 		return $this->_quote;
 	}
-
 	/**
 	 * Get the current request scheme
-	 *
 	 * @return string
 	 */
 	protected function _getRequestScheme()
 	{
 		return Mage::app()->getRequest()->getScheme();
 	}
-
 	/**
 	 * Determine which type of page the user is on
 	 * default, home, product, checkout thanks
@@ -70,7 +62,6 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 			return 'default';
 		}
 	}
-
 	/**
 	 * Get Fetchback beacon params based on the page type
 	 */
@@ -88,7 +79,6 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 				return $this->_getDefaultParams();
 		}
 	}
-
 	/**
 	 * Default params for beacon on all pages
 	 */
@@ -100,24 +90,21 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 			'name' => 'landing',
 		);
 	}
-
 	/**
 	 * Get the params for product page
-	 *
 	 * @return array
 	 */
 	protected function _getProductParams()
 	{
 		$currentProductId = (int) $this->getRequest()->getParam('id');
+		$mageProduct = Mage::getModel('catalog/product')->load($currentProductId);
 		return array_merge($this->_getDefaultParams(), array(
 			'name' => 'landing',
-			'browse_products' => $currentProductId,
+			'browse_products' => $mageProduct->getSku(),
 		));
 	}
-
 	/**
 	 * Get the params for cart page
-	 *
 	 * @return array
 	 */
 	protected function _getCartParams()
@@ -132,10 +119,8 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 		}
 		return $params;
 	}
-
 	/**
 	 * Get the params for checkout thanks page
-	 *
 	 * @return array
 	 */
 	protected function _getCheckoutSuccessParams()
@@ -155,25 +140,20 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 		}
 		return $params;
 	}
-
 	/**
 	 * array_reduce callback to get comma separated list of product ids
-	 *
 	 * @param string $result
 	 * @param Mage_Sales_Model_Quote_Item|Mage_Sales_Model_Order_Item $item
 	 * @return string
 	 */
 	protected function _pidListFromCollection($result, $item)
 	{
-		$product = Mage::getModel('catalog/product')->load($item->getProductId());
-		$productId = $product->getIdBySku($item->getSku());
+		$productId = $item->getSku();
 		$result .= (empty($result) ? '' : ',') . $productId;
 		return $result;
 	}
-
 	/**
 	 * Get the beacon url.
-	 *
 	 * @return String
 	 */
 	public function getBeaconUrl()
@@ -182,12 +162,11 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 		$url = $this->_getRequestScheme() . "://pixel.fetchback.com/serve/fb/pdj?" . http_build_query($params);
 		return $url;
 	}
-
 	/**
 	 * Whether or not to display the beacon.
 	 */
 	public function showBeacon()
 	{
-		return Mage::helper('eems_display/config')->isEnabled(Mage::app()->getStore()->getId());
+		return Mage::helper('eems_display/config')->getIsEnabled(Mage::app()->getStore()->getId());
 	}
 }

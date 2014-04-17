@@ -5,7 +5,18 @@
 			<version>1.0.0.0</version>
 		</EbayEnterprise_Display>
 	</modules>
-	<default />
+	<default>
+		<marketing_solutions>
+			<eems_display>
+				<!-- Disabled by default: -->
+				<enabled>0</enabled>
+				<!-- Path is relative to Mage::getBase('var'); -->
+				<feed_file_path>eems_display</feed_file_path>
+				<!-- Site Id provided by EEMS Display -->
+				<site_id></site_id>
+			</eems_display>
+		</marketing_solutions>
+	</default>
 	<global>
 		<blocks>
 			<eems_display>
@@ -36,7 +47,13 @@
 				<use>standard</use>
 				<args>
 					<module>EbayEnterprise_Display</module>
-					<frontName>eemsDisplayProductFeed</frontName>
+					<!--
+						The frontName isn't particularly important.
+						The Product Feed Url displayed for the End User to provide
+						to EEMS Display comes here to figure it out.
+						This is the only place you need to specify it.
+					 -->
+					<frontName>eems-dpf</frontName>
 				</args>
 			</eems_display>
 		</routers>
@@ -44,10 +61,17 @@
 	<crontab>
 		<jobs>
 			<eems_display_products_feed>
-				<schedule><cron_expr>0 3 * * *</cron_expr></schedule>
-				<!-- @TODO This needs to be some sensible value! -->
+				<schedule><cron_expr>0 */3 * * *</cron_expr>
+				</schedule>
 				<run><model>display/products::export</model></run>
 			</eems_display_products_feed>
 		</jobs>
 	</crontab>
+	<phpunit>
+		<suite>
+			<modules>
+				<EbayEnterprise_Display/>
+			</modules>
+		</suite>
+	</phpunit>
 </config>

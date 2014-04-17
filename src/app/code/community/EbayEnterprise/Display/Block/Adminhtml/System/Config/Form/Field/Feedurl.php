@@ -11,12 +11,15 @@ class EbayEnterprise_Display_Block_Adminhtml_System_Config_Form_Field_Feedurl
 {
 	protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
 	{
-		$element->addClass('text');
-		$html = '<div id="' . $element->getHtmlId()
-					. '" name="'.$element->getName()
-					. '" ><b>' .
-							$element->getEscapedValue()
-					. "</b></div>";
+		$element->addClass('link');
+		$id = $element->getHtmlId();
+
+		// If there's an inherited checkbox; hide it. This is a read-only property, and the checkbox is superfluous
+		$inheritedCheckbox = $id . '_inherit';
+		$hideCheckboxJs    = 'if ($("' . $inheritedCheckbox . '") != undefined ){$("' . $inheritedCheckbox . '").hide();}';
+		$html = '<a id="' . $id . '" name="'.$element->getName()
+			. '" onClick="return false;" href="#">' .  $element->getEscapedValue() . '</a>'
+			. Mage::helper('core/js')->getScript('document.observe("dom:loaded", function() {' . $hideCheckboxJs . '});');
 		return $html;
 	}
 }

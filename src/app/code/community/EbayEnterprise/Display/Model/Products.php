@@ -1,35 +1,60 @@
 <?php
 class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 {
+	const CSV_FIELD_DELIMITER = ',';
+	const CSV_FIELD_ENCLOSURE = '"';
 	/**
-	 * @TODO Cleanups for the 'final' implementation of export.
-	 * Export product feeds, somehow, by store (I guess)/ Site Id? I guess?
+	 * Export product feeds. Get every store from every store group for every website.
 	 */
 	public function export()
 	{
-		/**
-		 * @TODO Tighten this up and match up with a custom backend model
-		 * that will let us display a link to the feed.
-		 */
-		$exportDirName  = Mage::getBaseDir('var');
 		foreach (Mage::app()->getWebsites() as $website) {
-			$storeId = $website->getDefaultGroup()->getDefaultStoreId();
-			$siteId = Mage::helper('eems_display/config')->getSiteId($storeId);
-			if (empty($siteId)) {
+			foreach ($website->getGroups() as $storeGroup) {
+				$this->_processStores($storeGroup->getStores());
+			}
+		}
+	}
+	/**
+	 * Puts an array of data into a file pointed to by fileHandle
+	 * @param $fileHandle
+	 * @param $dataRows
+	 * @return self
+	 */
+	protected function _putCsvRows($fileHandle, $dataRows) {
+		foreach ($dataRows as $row) {
+			fputcsv( $fileHandle, $row, self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
+		}
+		return $this;
+	}
+	/**
+	 * Processes output files for one Store Group. Each store that has a
+	 * non-empty SiteId and is enabled gets a feed output. File name
+	 * is StoreId.csv and it's placed in the configured feed file path.
+	 */
+	protected function _processStores($stores)
+	{
+		$helper   = Mage::helper('eems_display/config');
+		$dirName  = $helper->getFeedFilePath();
+		foreach ($stores as $store) {
+			$storeId = $store->getId();
+			$siteId  = $helper->getSiteId($storeId);
+			if (empty($siteId) || !$helper->getIsEnabled($storeId)) {
 				continue;
 			}
-			$outputFileName = $exportDirName . DS . $siteId . '-' . $storeId . '.csv';
-			$fh = fopen($outputFileName, 'w');
-			if ($fh == FALSE) {
-				// @TODO Some error message should be emitted
+			$outputFileName = $dirName . DS . $storeId . '.csv';
+			$fh = @fopen($outputFileName, 'w');
+			if ($fh == false) {
+				Mage::log('Cannot open file for writing: ' . $outputFileName);
+				continue;
 			}
-			$rows = $this->_getProductData($storeId);
-			fputcsv($fh, $this->_getProductDataHeader(), ',');
-			foreach ($rows as $row) {
-				fputcsv($fh, $row, ',');
-			}
+			$rows = array_merge(
+				array($this->_getProductDataHeader()),
+				$this->_getProductData($storeId)
+			);
+			$this->_putCsvRows($fh, $rows);
 			fclose($fh);
 		}
+		return $this;
 	}
 	/**
 	 * Get the product collection for this store.
@@ -39,10 +64,8 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	{
 		return Mage::getModel('catalog/product')
 			->getCollection()
-			->addStoreFilter($defaultStoreView)
-			->addAttributeToSelect(array('sku', 'name', 'short_description', 'price', 'image'));
+			->addStoreFilter($storeId);
 	}
-
 	/**
 	 * Return an array of header row values.
 	 * @return array
@@ -59,17 +82,16 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	{
 		$data = array();
 		$products = $this->_getProductCollection($storeId=null);
-		foreach($products as $product) {
-			$productImageUrl = '';
+		foreach($products as $collectedProduct) {
+			$product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($collectedProduct->getId());
 			try {
-				// @TODO: Set to 150x150 size:
-				$productImageUrl = $product->getImageUrl();
+				// @TODO Image Resizing.
+				// Do we have to do something like this?:
+				// http://magento.stackexchange.com/questions/2827/product-image-cache-image-resizing
+				$productImageUrl = $product->getImageUrl(); // @TODO: Set to 150x150 size
 			} catch (Exception $e) {
+				$productImageUrl = '';
 				Mage::log('Error sizing Image URL for ' . $product->getSku(), $e->getMessage());
-				/*
-				@TODO: Either log something, or write a comment that we specifically are ignoring
-				this exception.
-				*/
 			}
 			$data[] = array(
 				$product->getSku(),              // "Id"

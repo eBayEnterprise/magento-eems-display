@@ -11,7 +11,41 @@ class EbayEnterprise_Display_IndexController extends Mage_Core_Controller_Front_
 	 */
 	public function retrieveAction()
 	{
-		$storeId = Mage::app()->getRequest()->getParam('id');
-		echo '<h1> Get products for id ' . $storeId . '</h1>';
+		$helper   = Mage::helper('eems_display/config');
+		$storeId  = Mage::app()->getRequest()->getParam('id');
+		$store    = Mage::getModel('core/store')->load($storeId);
+		if (!$store->getId() || !$helper->getIsEnabled($storeId) || !$helper->getSiteId($storeId)) {
+			// Store is invalid, or not enabled for EEMS Disply, or there's no SiteId here.
+			$this->_sendNotFound();
+			return;
+		}
+		$fileName = Mage::helper('eems_display/config')->getFeedFilePath() . DS . $storeId . '.csv';
+		if (!file_exists($fileName)) {
+			// File not here, can't send it
+			$this->_sendNotFound();
+			return;
+		}
+		$contents = file_get_contents($fileName);
+		$this->_sendContents($contents);
+	}
+	/**
+	 * Sends an http response with the given contents
+	 * @param type $contents
+	 */
+	protected function _sendContents($contents)
+	{
+		$this->getResponse()
+			->setHeader('Content-Type', 'text/csv')
+			->appendBody($contents)
+			->sendResponse();
+	}
+	/**
+	 * Send not found.
+	 */
+	protected function _sendNotFound()
+	{
+		$this->getResponse()
+			->setRawHeader('HTTP/1.1, 404')
+			->sendResponse();
 	}
 }
