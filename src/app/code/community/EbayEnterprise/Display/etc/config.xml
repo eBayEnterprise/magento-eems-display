@@ -25,10 +25,24 @@
 						<keep_aspect_ratio>1</keep_aspect_ratio>
 					</image>
 				</feed>
+				<!-- Installation Email -->
+				<install_email>
+					<name>Email Send To Name</name>
+					<email>Email@Email.com</email>
+				</install_email>
 			</eems_display>
 		</marketing_solutions>
 	</default>
 	<global>
+
+		<template>
+			<email>
+				<eems_display_installed module="eems_display">
+					<file>eemsdisplay_installed.html</file>
+					<type>html</type>
+				</eems_display_installed>
+			</email>
+		</template>
 		<blocks>
 			<eems_display>
 				<class>EbayEnterprise_Display_Block</class>
@@ -44,6 +58,13 @@
 				<class>EbayEnterprise_Display_Model</class>
 			</eems_display>
 		</models>
+		<resources>
+			<eemsdisplay_setup>
+				<setup>
+					<module>EbayEnterprise_Display</module>
+				</setup>
+			</eemsdisplay_setup>
+		</resources>
 	</global>
 	<frontend>
 		<layout>

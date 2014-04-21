@@ -8,6 +8,10 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 */
 	public function export()
 	{
+		// Email won't send if it's previously been sent. And I'm doing
+		// The installation notification here because it seemed as good a place
+		// as any, and seemed likely that we'd have something configured by now.
+		Mage::getModel('eems_display/email')->sendInstalledNotification();
 		foreach (Mage::app()->getWebsites() as $website) {
 			foreach ($website->getGroups() as $storeGroup) {
 				$this->_processStores($storeGroup->getStores());

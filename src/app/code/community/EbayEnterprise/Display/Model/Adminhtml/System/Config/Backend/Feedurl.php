@@ -7,7 +7,7 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 	 * Return store Id for the current configuration scope
 	 * @return string
 	 */
-	protected function _getStoreIdForCurrentScope()
+	public function getStoreIdForCurrentScope()
 	{
 		$storeCode = Mage::app()->getRequest()->getParam('store');
 		if (!empty($storeCode)) {
@@ -29,22 +29,15 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 	public function _afterLoad()
 	{
 		parent::_afterLoad();
-		$productFeedUrl = '';
-
-		$sess   = Mage::getSingleton($this::SESSION_KEY);
-		$helper = Mage::helper('eems_display/config');
-
-		$storeId   = $this->_getStoreIdForCurrentScope();
-		$storeUrl  = Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK);
-		$frontName = $helper->getProductFeedFrontName();
-
-		$siteId = $helper->getSiteId($storeId);
+		$sess    = Mage::getSingleton($this::SESSION_KEY);
+		$storeId = $this->_getStoreIdForCurrentScope();
+		$siteId  = Mage::helper('eems_display/config')->getSiteId($storeId);
 		if (empty($siteId)) {
-			$sess->addWarning("No Site Id configured for current scope.");
+			$this->setValue('');
+			$sess->addWarning('No Site Id configured for current scope.');
 		} else {
-			$productFeedUrl = $storeUrl . $frontName . '/index/retrieve?id=' . $storeId;
+			$this->setValue(Mage::helper('eems_display')->getProductFeedUrl($storeId));
 		}
-		$this->setValue($productFeedUrl);
 		return $this;
 	}
 }

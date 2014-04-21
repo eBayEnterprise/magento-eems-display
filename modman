@@ -1,5 +1,6 @@
 # EEMS Display
 src/app/code/community/EbayEnterprise/* app/code/community/EbayEnterprise/
 src/app/etc/modules/*.xml app/etc/modules/
+src/app/locale/en_US/template/email/eemsdisplay_installed.html app/locale/en_US/template/email/eemsdisplay_installed.html
 src/app/design/frontend/base/default/layout/eems_display.xml app/design/frontend/base/default/layout/eems_display.xml
 src/app/design/frontend/base/default/template/eems_display/beacon.phtml app/design/frontend/base/default/template/eems_display/beacon.phtml
