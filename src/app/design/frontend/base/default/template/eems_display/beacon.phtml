@@ -3,12 +3,14 @@
 		(function (d,i) {
 			i=d.createElement('iframe');
 			i.width=i.height=1;
+			i.frameBorder=i.marginheight=i.marginwidth=0;
+			i.scrolling='no';
 			i.frameBorder=0;
 			i.src="<?php echo $this->getBeaconUrl()?>";
 			d.body.appendChild(i);
 		}(document));
 	</script>
 	<noscript>
-		<iframe width=1 height=1 frameBorder=0 src="<?php echo $this->getBeaconUrl() ?>"></iframe>
+		<iframe src='<?php echo $this->getBeaconUrl() ?>' scrolling='no' width='1' height='1' marginheight='0' marginwidth='0' frameborder='0'></iframe>
 	</noscript>
 <?php endif?>

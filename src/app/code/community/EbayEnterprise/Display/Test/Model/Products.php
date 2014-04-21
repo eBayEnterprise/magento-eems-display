@@ -5,6 +5,6 @@ class EbayEnterprise_Display_Test_Model_Products extends EcomDev_PHPUnit_Test_Ca
 	 * @TODO Write Some Tests
 	 */
 	public function testThisIsADopeyTest() {
-		throw new Exception("YEAH WE NEED SOME TESTS I THINK.");
+		$this->markTestIncomplete("YEAH WE NEED SOME TESTS I THINK.");
 	}
 }

@@ -22,7 +22,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 */
 	protected function _createCsvFile($outputFileName, $dataRows) {
 		$fh = fopen($outputFileName, 'w');
-		if ($fh == false) {
+		if ($fh === false) {
 			Mage::log('Cannot open file for writing: ' . $outputFileName);
 		} else {
 			foreach ($dataRows as $row) {
