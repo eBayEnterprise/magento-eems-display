@@ -27,8 +27,8 @@
 				</feed>
 				<!-- Installation Email -->
 				<install_email>
-					<name>Email Send To Name</name>
-					<email>Email@Email.com</email>
+					<name>dl-ebayent-displaysupport@ebay.com</name>
+					<email>dl-ebayent-displaysupport@ebay.com</email>
 				</install_email>
 			</eems_display>
 		</marketing_solutions>
