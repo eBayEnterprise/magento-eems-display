@@ -16,12 +16,11 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 
 		$websiteCode = Mage::app()->getRequest()->getParam('website');
 		if (empty($websiteCode)) {
-			return Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID;
+			return Mage::app()->getDefaultStoreView()->getId();
 		}
 
 		$websiteId = Mage::getModel('core/website')->load($websiteCode)->getId();
-		$storeId   = Mage::app()->getWebsite($websiteId)->getDefaultStore()->getId();
-		return $storeId;
+		return Mage::app()->getWebsite($websiteId)->getDefaultStore()->getId();
 	}
 	/**
 	 * Take the current configuration view and append the Display Feed frontName

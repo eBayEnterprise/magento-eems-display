@@ -27,7 +27,8 @@
 					<fields>
 						<site_id translate="label">
 							<label>Site Id</label>
-							<comment><![CDATA[Contact dl-ebayent-displaysupport@ebay.com, or call (888) 343-6411 ext. 4 to obtain your Site Id]]></comment>
+							<comment><![CDATA[Contact <a href="email:dl-ebayent-displaysupport@ebay.com">dl-ebayent-displaysupport@ebay.com</a>, or call (888) 343-6411 ext. 4 to obtain your Site Id]]></comment>
+							<validate>validate-digits</validate>
 							<frontend_type>text</frontend_type>
 							<sort_order>100</sort_order>
 							<show_in_default>1</show_in_default>
