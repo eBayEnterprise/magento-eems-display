@@ -31,7 +31,7 @@ $newVersion = trim(shell_exec('git describe --abbrev=0'));
 $oldVersion = trim(shell_exec(sprintf('git describe --abbrev=0 %s~', $newVersion)));
 echo "Setup config for upgrade from {$oldVersion} to {$newVersion}\n";
 $tempDir = _createTempDir();
-$archiveName = 'ebay_enterprise_marketing_solutions_affiliate.tar';
+$archiveName = 'eBay_Enterprise_Marketing_Solutions_Affiliate.tar';
 _createArchive($tempDir, $archiveName);
 $releaseNotes = trim(shell_exec(sprintf("git log --pretty=format:'%%s' \"%s\"..", $oldVersion)));
 
@@ -44,7 +44,7 @@ return array(
 
 	//The Magento Connect extension name.  Must be unique on Magento Connect
 	//Has no relation to your code module name.  Will be the Connect extension name
-	'extension_name'         => 'ebay_enterprise_marketing_solutions_affiliate',
+	'extension_name'         => 'eBay_Enterprise_Marketing_Solutions_Affiliate',
 
 	//Your extension version.  By default, if you're creating an extension from a
 	//single Magento module, the tar-to-connect script will look to make sure this
@@ -56,18 +56,18 @@ return array(
 	//Where on your local system you'd like to build the files to
 	'path_output'            => __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'build',
 
-	//Magento Connect license value.
-	'stability'              => 'beta',
+	//Magento Connect stability.
+	'stability'              => 'stable',
 
 	//Magento Connect license value
-	'license'                => 'proprietary',
+	'license'                => 'OSL',
 
 	//Magento Connect channel value.  This should almost always (always?) be community
 	'channel'                => 'community',
 
 	//Magento Connect information fields.
-	'summary'                => 'eBay Enterprise Marketing Solutions Affiliate',
-	'description'            => 'eBay Enterprise Marketing Solutions Affiliate',
+	'summary'                => 'eBay Enterprise Marketing Solutions Affiliate Integration.',
+	'description'            => 'eBay Enterprise Marketing Solutions Affiliate Integration.',
 	'notes'                  => $releaseNotes,
 
 	//Magento Connect author information. If author_email is foo@example.com, script will
