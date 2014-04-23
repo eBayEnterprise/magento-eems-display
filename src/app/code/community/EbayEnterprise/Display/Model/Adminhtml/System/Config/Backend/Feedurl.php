@@ -34,7 +34,6 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 		$siteId  = Mage::helper('eems_display/config')->getSiteId($storeId);
 		if (empty($siteId)) {
 			$this->setValue('');
-			$sess->addWarning('No Site Id configured for current scope.');
 		} else {
 			$this->setValue(Mage::helper('eems_display')->getProductFeedUrl($storeId));
 		}
