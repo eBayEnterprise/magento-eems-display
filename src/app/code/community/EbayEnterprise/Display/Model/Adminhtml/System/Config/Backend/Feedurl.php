@@ -2,7 +2,6 @@
 class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 	extends Mage_Core_Model_Config_Data
 {
-	const SESSION_KEY = 'adminhtml/session';
 	/**
 	 * Return store Id for the current configuration scope
 	 * @return string
@@ -29,7 +28,6 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 	public function _afterLoad()
 	{
 		parent::_afterLoad();
-		$sess    = Mage::getSingleton($this::SESSION_KEY);
 		$storeId = $this->getStoreIdForCurrentScope();
 		$siteId  = Mage::helper('eems_display/config')->getSiteId($storeId);
 		if (empty($siteId)) {
