@@ -30,7 +30,7 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 	{
 		parent::_afterLoad();
 		$sess    = Mage::getSingleton($this::SESSION_KEY);
-		$storeId = $this->_getStoreIdForCurrentScope();
+		$storeId = $this->getStoreIdForCurrentScope();
 		$siteId  = Mage::helper('eems_display/config')->getSiteId($storeId);
 		if (empty($siteId)) {
 			$this->setValue('');
