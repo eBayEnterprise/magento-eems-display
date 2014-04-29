@@ -11,13 +11,19 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	const EEMS_DISPLAY_FEED_IMAGE_KEEP_ASPECT_RATIO_PATH = 'marketing_solutions/eems_display/feed/image/keep_aspect_ratio';
 	const EEMS_DISPLAY_PRODUCT_FEED_FRONTNAME_PATH       = 'frontend/routers/eems_display/args/frontName';
 	const EEMS_DISPLAY_SITE_ID_PATH                      = 'marketing_solutions/eems_display/site_id';
+	const EEMS_DISPLAY_SITE_ID_CHECKSUM_PATH             = 'marketing_solutions/eems_display/site_id_checksum';
 	/**
 	 * Get whether or not this extension is enabled.
 	 * @return boolean
 	 */
 	public function getIsEnabled($storeId)
 	{
-		return Mage::getStoreConfigFlag(self::EEMS_DISPLAY_ENABLED_PATH, $storeId);
+		$siteIsEnabled  = Mage::getStoreConfigFlag(self::EEMS_DISPLAY_ENABLED_PATH, $storeId);
+		list(, $siteId) = 
+			Mage::helper('eems_display')->splitSiteIdChecksumField(
+				Mage::getStoreConfig(self::EEMS_DISPLAY_SITE_ID_CHECKSUM_PATH, $storeId)
+			);
+		return $siteIsEnabled && $this->getSiteId($storeId) === $siteId;
 	}
 	/**
 	 * Get the SiteId from admin configuration.
