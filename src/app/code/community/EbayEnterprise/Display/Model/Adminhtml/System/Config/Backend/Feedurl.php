@@ -6,7 +6,7 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Feedurl
 	 * Take the current configuration view and append the Display Feed frontName
 	 * to present a complete route
 	 */
-	public function _afterLoad()
+	protected function _afterLoad()
 	{
 		parent::_afterLoad();
 		$storeId = Mage::helper('eems_display')->getStoreIdForCurrentAdminScope();

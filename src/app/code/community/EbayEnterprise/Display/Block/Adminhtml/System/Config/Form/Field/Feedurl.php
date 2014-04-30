@@ -16,10 +16,9 @@ class EbayEnterprise_Display_Block_Adminhtml_System_Config_Form_Field_Feedurl
 
 		// If there's an inherited checkbox; hide it. This is a read-only property, and the checkbox is superfluous
 		$inheritedCheckbox = $id . '_inherit';
-		$hideCheckboxJs    = 'if ($("' . $inheritedCheckbox . '") != undefined ){$("' . $inheritedCheckbox . '").hide();}';
-		$html = '<a id="' . $id . '" name="'.$element->getName()
-			. '" onClick="return false;" href="#">' .  $element->getEscapedValue() . '</a>'
-			. Mage::helper('core/js')->getScript('document.observe("dom:loaded", function() {' . $hideCheckboxJs . '});');
+		$hideCheckboxJs = 'if ($("' . $inheritedCheckbox . '") != undefined ){$("' . $inheritedCheckbox . '").hide();}';
+		$html = sprintf('<a id="%s" name="%s" onClick="return false;" href="#">%s</a>', $id, $element->getName(), $element->getEscapedValue());
+		$html .= Mage::helper('core/js')->getScript('document.observe("dom:loaded", function() {' . $hideCheckboxJs . '});');
 		return $html;
 	}
 }

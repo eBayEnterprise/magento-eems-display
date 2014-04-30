@@ -19,10 +19,9 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	public function getIsEnabled($storeId)
 	{
 		$siteIsEnabled  = Mage::getStoreConfigFlag(self::EEMS_DISPLAY_ENABLED_PATH, $storeId);
-		list(, $siteId) = 
-			Mage::helper('eems_display')->splitSiteIdChecksumField(
-				Mage::getStoreConfig(self::EEMS_DISPLAY_SITE_ID_CHECKSUM_PATH, $storeId)
-			);
+		list(, $siteId) = Mage::helper('eems_display')->splitSiteIdChecksumField(
+			Mage::getStoreConfig(self::EEMS_DISPLAY_SITE_ID_CHECKSUM_PATH, $storeId)
+		);
 		return $siteIsEnabled && $this->getSiteId($storeId) === $siteId;
 	}
 	/**
@@ -42,9 +41,9 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	public function getFeedFilePath()
 	{
 		$path = Mage::getBaseDir('var') . DS . Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_FILE_PATH);
-		if (!file_exists($path) && !@mkdir($path,0777,true)) {
+		if (!file_exists($path) && !@mkdir($path, 0700, true)) { // Recursively create full feed file path
 			throw new EbayEnterprise_Display_Model_Error_Exception('Cannot create specified path: ' . $path);
-		} 
+		}
 		if (!is_dir($path)) {
 			throw new EbayEnterprise_Display_Model_Error_Exception('Specified path is not a directory: ' . $path);
 		}
@@ -67,7 +66,7 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	 */
 	public function getFeedImageHeight($storeId)
 	{
-		return (int)Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_IMAGE_HEIGHT_PATH, $storeId);
+		return (int) Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_IMAGE_HEIGHT_PATH, $storeId);
 	}
 	/**
 	 * Get the width configuration for feed images
@@ -75,7 +74,7 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	 */
 	public function getFeedImageWidth($storeId)
 	{
-		return (int)Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_IMAGE_WIDTH_PATH, $storeId);
+		return (int) Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_IMAGE_WIDTH_PATH, $storeId);
 	}
 	/**
 	 * Get the flag whether to keep aspect ratio
@@ -83,6 +82,6 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	 */
 	public function getFeedImageKeepAspectRatio($storeId)
 	{
-		return (bool)Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_IMAGE_KEEP_ASPECT_RATIO_PATH, $storeId);
+		return (bool) Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_IMAGE_KEEP_ASPECT_RATIO_PATH, $storeId);
 	}
 }

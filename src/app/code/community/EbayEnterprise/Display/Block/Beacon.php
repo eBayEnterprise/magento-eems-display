@@ -70,13 +70,13 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 		$pageType = $this->getPageType();
 		switch ($pageType) {
 			case 'product':
-				return $this->_getProductParams();
+			return $this->_getProductParams();
 			case 'cart':
-				return $this->_getCartParams();
+			return $this->_getCartParams();
 			case 'checkout_success':
-				return $this->_getCheckoutSuccessParams();
+			return $this->_getCheckoutSuccessParams();
 			default:
-				return $this->_getDefaultParams();
+			return $this->_getDefaultParams();
 		}
 	}
 	/**
@@ -159,7 +159,7 @@ class EbayEnterprise_Display_Block_Beacon extends Mage_Core_Block_Template
 	public function getBeaconUrl()
 	{
 		$params = $this->_getParamsByPageType();
-		$url = $this->_getRequestScheme() . "://pixel.fetchback.com/serve/fb/pdj?" . http_build_query($params);
+		$url = $this->_getRequestScheme() . '://pixel.fetchback.com/serve/fb/pdj?' . http_build_query($params);
 		return $url;
 	}
 	/**

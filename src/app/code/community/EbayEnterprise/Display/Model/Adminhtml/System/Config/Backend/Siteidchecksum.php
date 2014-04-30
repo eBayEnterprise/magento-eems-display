@@ -12,7 +12,7 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Siteidchecksu
 	 * Send only the Checksum part of the Site Id Checksum Field.
 	 * @return self
 	 */
-	public function _afterLoad()
+	protected function _afterLoad()
 	{
 		parent::_afterLoad();
 		list($justTheHash,) = Mage::helper('eems_display')->splitSiteIdChecksumField($this->getOldValue());
@@ -23,9 +23,9 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Siteidchecksu
 	 * Checks to see if we have a new and valid Site Id Checksum Entered
 	 * @return self
 	 */
-	public function _beforeSave()
+	protected function _beforeSave()
 	{
-		$helper   = Mage::helper('eems_display'); // We need this helper several times herein
+		$helper = Mage::helper('eems_display'); // We need this helper several times herein
 
 		$newChecksum = $this->getValue();
 		list($oldHash,$oldSite) = $helper->splitSiteIdChecksumField($this->getOldValue());
