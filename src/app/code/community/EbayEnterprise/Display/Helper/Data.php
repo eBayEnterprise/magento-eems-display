@@ -13,4 +13,33 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 			. self::EEMS_DISPLAY_PRODUCT_FEED_ROUTE
 			. $storeId;
 	}
+	/**
+	 * Find the closest default store id for the current admin scope.
+	 * @return string
+	 */
+	public function getStoreIdForCurrentAdminScope()
+	{
+		$storeCode = Mage::app()->getRequest()->getParam('store');
+		if (!empty($storeCode)) {
+			return Mage::getModel('core/store')->load($storeCode)->getId();
+		}
+		$websiteCode = Mage::app()->getRequest()->getParam('website');
+		if (empty($websiteCode)) {
+			return Mage::app()->getDefaultStoreView()->getId();
+		}
+		$websiteId = Mage::getModel('core/website')->load($websiteCode)->getId();
+		return Mage::app()->getWebsite($websiteId)->getDefaultStore()->getId();
+	}
+	/**
+	 * Split site id checksum field.
+	 * Element 0 holds the hash, Element 1 holds the original site id used to generate it.
+	 */
+	public function splitSiteIdChecksumField($field)
+	{
+		$sep = EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Siteidchecksum::FIELD_SEP;
+		if (strpos($field,$sep) === false) {
+			return array('','');
+		}
+		return preg_split('/' . $sep .  '/', $field);
+	}
 }

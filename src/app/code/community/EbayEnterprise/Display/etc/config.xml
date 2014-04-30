@@ -12,7 +12,7 @@
 				<!-- Disabled by default: -->
 				<enabled>0</enabled>
 				<!-- Site Id provided by EEMS Display -->
-				<site_id></site_id>
+				<site_id />
 				<!-- Feed values you cannot change in the admin interface: -->
 				<feed>
 				<!-- Path is relative to Mage::getBase('var'); -->
@@ -34,7 +34,6 @@
 		</marketing_solutions>
 	</default>
 	<global>
-
 		<template>
 			<email>
 				<eems_display_installed module="eems_display">
