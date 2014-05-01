@@ -8,10 +8,8 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getProductFeedUrl($storeId)
 	{
-		return Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK)
-			. Mage::helper('eems_display/config')->getProductFeedFrontName()
-			. self::EEMS_DISPLAY_PRODUCT_FEED_ROUTE
-			. $storeId;
+		return Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK) .
+			Mage::helper('eems_display/config')->getProductFeedFrontName() . self::EEMS_DISPLAY_PRODUCT_FEED_ROUTE . $storeId;
 	}
 	/**
 	 * Find the closest default store id for the current admin scope.
@@ -37,9 +35,9 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	public function splitSiteIdChecksumField($field)
 	{
 		$sep = EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Siteidchecksum::FIELD_SEP;
-		if (strpos($field,$sep) === false) {
+		if (strpos($field, $sep) === false) {
 			return array('','');
 		}
-		return preg_split('/' . $sep .  '/', $field);
+		return preg_split("/$sep/", $field);
 	}
 }

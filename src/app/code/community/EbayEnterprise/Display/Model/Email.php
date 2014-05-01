@@ -52,7 +52,7 @@ class EbayEnterprise_Display_Model_Email extends Mage_Core_Model_Email
 				foreach($storeGroup->getStores() as $store) {
 					$productFeedUrls[] = Mage::helper('eems_display')->getProductFeedUrl($store->getId());
 				}
-			}	
+			}
 		}
 		return $productFeedUrls;
 	}

@@ -8,7 +8,7 @@ class EbayEnterprise_Display_Test_Model_ProductsTest extends EcomDev_PHPUnit_Tes
 	 */
 	public function testGetProductCollection()
 	{
-		$testStoreId = Mage_Core_Model_App::ADMIN_STORE_ID; 
+		$testStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
 		$productCollection = $this->getResourceModelMockBuilder('catalog/product_collection')
 			->disableOriginalConstructor()
 			->setMethods(array('addStoreFilter'))

@@ -24,7 +24,8 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 * @param $dataRows
 	 * @return self
 	 */
-	protected function _createCsvFile($outputFileName, $dataRows) {
+	protected function _createCsvFile($outputFileName, $dataRows)
+	{
 		$fh = fopen($outputFileName, 'w');
 		if ($fh === false) {
 			Mage::log('Cannot open file for writing: ' . $outputFileName);
@@ -74,7 +75,8 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 * Return an array of header row values.
 	 * @return array
 	 */
-	protected function _getProductDataHeader() {
+	protected function _getProductDataHeader()
+	{
 		return array('Id', 'Name', 'Description', 'Price', 'Image URL', 'Page URL');
 	}
 	/**
@@ -87,7 +89,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		try {
 			// Image implementation doesn't save the resize filed unless it's coerced into
 			// a string. Its (php) magic '__toString()' method is what actually resizes and saves
-			$imageUrl = (string)Mage::helper('catalog/image')
+			$imageUrl = (string) Mage::helper('catalog/image')
 				->init($product, 'image')
 				->keepAspectRatio(
 					$helper->getFeedImageKeepAspectRatio($storeId)
@@ -114,12 +116,12 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		foreach($products as $collectedProduct) {
 			$product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($collectedProduct->getId());
 			$data[] = array(
-				$product->getSku(),                          // "Id"
-				$product->getName(),                         // "Name"
-				$product->getShortDescription(),             // "Description"
-				$product->getPrice(),                        // "Price"
-				$this->_getResizedImage($product, $storeId), // "Image URL"
-				$product->getProductUrl(),                   // "Page URL"
+				$product->getSku(),
+				$product->getName(),
+				$product->getShortDescription(),
+				$product->getPrice(),
+				$this->_getResizedImage($product, $storeId),
+				$product->getProductUrl(),
 			);
 		}
 		return $data;
