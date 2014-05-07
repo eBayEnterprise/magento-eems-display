@@ -60,7 +60,7 @@ return array(
 	'stability'              => 'stable',
 
 	//Magento Connect license value
-	'license'                => 'OSL',
+	'license'                => 'EULA',
 
 	//Magento Connect channel value.  This should almost always (always?) be community
 	'channel'                => 'community',
