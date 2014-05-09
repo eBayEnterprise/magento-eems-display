@@ -31,7 +31,7 @@ $newVersion = trim(shell_exec('git describe --abbrev=0'));
 $oldVersion = trim(shell_exec(sprintf('git describe --abbrev=0 %s~', $newVersion)));
 echo "Setup config for upgrade from {$oldVersion} to {$newVersion}\n";
 $tempDir = _createTempDir();
-$archiveName = 'eBay_Enterprise_Marketing_Solutions_Affiliate.tar';
+$archiveName = 'eBay_Enterprise_Affiliate_Extension.tar';
 _createArchive($tempDir, $archiveName);
 $releaseNotes = trim(shell_exec(sprintf("git log --pretty=format:'%%s' \"%s\"..", $oldVersion)));
 
@@ -44,7 +44,7 @@ return array(
 
 	//The Magento Connect extension name.  Must be unique on Magento Connect
 	//Has no relation to your code module name.  Will be the Connect extension name
-	'extension_name'         => 'eBay_Enterprise_Marketing_Solutions_Affiliate',
+	'extension_name'         => 'eBay_Enterprise_Affiliate_Extension',
 
 	//Your extension version.  By default, if you're creating an extension from a
 	//single Magento module, the tar-to-connect script will look to make sure this
@@ -66,8 +66,8 @@ return array(
 	'channel'                => 'community',
 
 	//Magento Connect information fields.
-	'summary'                => 'eBay Enterprise Marketing Solutions Affiliate Integration.',
-	'description'            => 'eBay Enterprise Marketing Solutions Affiliate Integration.',
+	'summary'                => 'eBay Enterprise Affiliate Extension.',
+	'description'            => 'eBay Enterprise Affiliate Extension.',
 	'notes'                  => $releaseNotes,
 
 	//Magento Connect author information. If author_email is foo@example.com, script will
