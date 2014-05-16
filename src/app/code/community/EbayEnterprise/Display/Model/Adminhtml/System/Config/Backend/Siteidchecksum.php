@@ -32,7 +32,7 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Siteidchecksu
 		if (empty($newChecksum) && empty($oldHash)) {
 			// If both old and new checksums are still empty, prompt with some help info.
 			$this->_dataSaveAllowed = false;
-			Mage::getSingleton($this::SESSION_KEY)
+			Mage::getSingleton(self::SESSION_KEY)
 				->addWarning('Please note that tracking is not enabled. Site Id Checksum is empty. ' . self::CONTACT_INFO);
 			return $this;
 		}
@@ -55,7 +55,7 @@ class EbayEnterprise_Display_Model_Adminhtml_System_Config_Backend_Siteidchecksu
 			parent::_beforeSave();
 		} else {
 			$this->setValue(self::FIELD_SEP);
-			Mage::getSingleton($this::SESSION_KEY)
+			Mage::getSingleton(self::SESSION_KEY)
 				->addError('Failed to validate the Site Id. ' . self::CONTACT_INFO);
 		}
 		return $this;
