@@ -1,0 +1,101 @@
+#!/bin/bash
+
+##
+# Generate a release tag.
+#
+# see: http://confluence.tools.us.gspt.net/display/v11dev/Magento+Extension+Release+Process
+#
+
+# SCRIPTNAME should always be the filename of the script.
+declare -r SCRIPTNAME=calc-tag
+
+# sed extended regular expression used to extract the release version
+# NOTE: a tag must exist that matches this pattern
+declare -r VERSION_REGEX='([0-9]+\.[0-9]+\.[0-9]+)(\..*|-[a-z]+-[0-9]+|)'
+
+##
+# Print the help for this script.
+printHelp() {
+	cat <<- 'EOF'
+		usage: calc-tag --meta-tag <alpha|beta|rc> [--build-number <build_number>]
+
+		options:
+	EOF
+	column -ts: <<- 'EOF'
+		  -h|--help:(this information)
+		  -m|--meta-tag=:(Release meta tag: alpha|beta|rc)
+		  -b|--build-number=:(Release build number)
+	EOF
+	echo
+}
+
+##
+# Process the commandline options in whatever order
+processOpts() {
+	while [[ $1 ]]; do
+		case $1 in
+			-h|--help)
+				printHelp
+				exit 0
+				;;
+			-m|--meta-tag)
+				metaTag="$2"
+				shift
+				;;
+			-m=*|--meta-tag=*)
+				metaTag="${1#*=}"
+				;;
+			-b|--build-number)
+				buildNumber="$2"
+				shift
+				;;
+			-b=*|--build-number=*)
+				buildNumber="${1#*=}"
+				;;
+			*)
+				printHelp
+				exit 1
+				;;
+		esac
+		shift
+	done
+
+	if ! has "$metaTag" 'alpha' 'beta' 'rc'; then
+		echo "Error: meta-tag must be one of ('alpha', 'beta', 'rc')" >&2
+		printHelp
+		exit 1
+	fi
+}
+
+##
+# generate the tag
+main() {
+	local metaTag
+	local buildNumber
+	local newTag
+	local oldTag
+	local releaseVersion
+
+	processOpts "$@"
+	oldTag=$(git describe --match *.*.* --abbrev=0 2>/dev/null)
+	releaseVersion=$(echo $oldTag | sed -rn "s/$VERSION_REGEX/\1/p")
+	if [[ -z $releaseVersion ]]; then
+		echo "Error: a tag must already exist that matches $VERSION_REGEX" >&2
+		exit 1
+	fi
+
+	if [[ -z "$buildNumber" ]]; then
+		buildNumber=$(git describe --tags --match *.*.*[.-]* --abbrev=0)
+		buildNumber=$((${buildNumber##*[.-]} + 1 ))
+	fi
+
+	newTag="$releaseVersion-$metaTag-$buildNumber"
+	if [[ ! -z $(git describe --abbrev=0 --exact-match $newTag 2>/dev/null) ]]; then
+		echo "Error: $newTag already exists." >&2
+		exit 1
+	fi
+
+	echo "$newTag"
+}
+
+. deploy/utils
