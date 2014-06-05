@@ -40,4 +40,13 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 		}
 		return preg_split("/$sep/", $field);
 	}
+	/**
+	 * Strip out Carriage Return (CR) and Line Feed (LF) characters from a string
+	 * @param string $content
+	 * @param string
+	 */
+	public function cleanString($content)
+	{
+		return trim(preg_replace("/\s*[\r\n]+\s*/", ' ', $content));
+	}
 }

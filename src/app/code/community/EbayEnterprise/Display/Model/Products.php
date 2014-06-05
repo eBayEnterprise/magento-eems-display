@@ -113,12 +113,13 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	{
 		$data     = array();
 		$products = $this->_getProductCollection($storeId);
+		$helper = Mage::helper('eems_display');
 		foreach($products as $collectedProduct) {
 			$product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($collectedProduct->getId());
 			$data[] = array(
 				$product->getSku(),
-				$product->getName(),
-				$product->getShortDescription(),
+				$helper->cleanString($product->getName()),
+				$helper->cleanString($product->getShortDescription()),
 				$product->getPrice(),
 				$this->_getResizedImage($product, $storeId),
 				$product->getProductUrl(),
