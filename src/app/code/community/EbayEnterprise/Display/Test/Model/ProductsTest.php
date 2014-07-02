@@ -20,7 +20,6 @@ class EbayEnterprise_Display_Test_Model_ProductsTest extends EcomDev_PHPUnit_Tes
 	/**
 	 * Test that EbayEnterprise_Display_Model_Products::_getProductCollection will return
 	 * a Mage_Catalog_Model_Resource_Product_Collection.
-	 * @test
 	 */
 	public function testGetProductCollection()
 	{

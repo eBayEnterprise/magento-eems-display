@@ -18,7 +18,6 @@
 class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_Case
 {
 	/**
-	 * @test
 	 */
 	public function testGetProductFeedUrl()
 	{
@@ -34,7 +33,6 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	 * Test that the method EbayEnterprise_Display_Helper_Data::cleanString
 	 * will normalized a string with multiple carriage return and line feed
 	 * into a single line string.
-	 * @test
 	 */
 	public function testCleanString()
 	{
