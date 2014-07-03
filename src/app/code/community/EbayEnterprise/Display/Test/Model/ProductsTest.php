@@ -26,11 +26,19 @@ class EbayEnterprise_Display_Test_Model_ProductsTest extends EcomDev_PHPUnit_Tes
 		$testStoreId = Mage_Core_Model_App::ADMIN_STORE_ID;
 		$productCollection = $this->getResourceModelMockBuilder('catalog/product_collection')
 			->disableOriginalConstructor()
-			->setMethods(array('addStoreFilter'))
+			->setMethods(array('addStoreFilter', 'setStore', 'addAttributeToSelect'))
 			->getMock();
 		$productCollection->expects($this->once())
 			->method('addStoreFilter')
 			->with($this->identicalTo($testStoreId))
+			->will($this->returnSelf());
+		$productCollection->expects($this->once())
+			->method('setStore')
+			->with($this->identicalTo($testStoreId))
+			->will($this->returnSelf());
+		$productCollection->expects($this->once())
+			->method('addAttributeToSelect')
+			->with($this->identicalTo(array('*')))
 			->will($this->returnSelf());
 		$this->replaceByMock('resource_model', 'catalog/product_collection', $productCollection);
 

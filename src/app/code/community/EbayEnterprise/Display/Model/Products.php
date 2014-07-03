@@ -83,8 +83,9 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 */
 	protected function _getProductCollection($storeId=null)
 	{
-		return Mage::getModel('catalog/product')
-			->getCollection()
+		return Mage::getResourceModel('catalog/product_collection')
+			->setStore($storeId)
+			->addAttributeToSelect(array('*'))
 			->addStoreFilter($storeId);
 	}
 	/**
@@ -130,8 +131,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		$data     = array();
 		$products = $this->_getProductCollection($storeId);
 		$helper = Mage::helper('eems_display');
-		foreach($products as $collectedProduct) {
-			$product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($collectedProduct->getId());
+		foreach($products as $product) {
 			$data[] = array(
 				$product->getSku(),
 				$helper->cleanString($product->getName()),
