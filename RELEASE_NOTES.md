@@ -1,0 +1,5 @@
+- Fix cron schedule
+- Fix redundant SQL loads
+- Fix product feed to filter out disabled, out-of-stock and invisible products
+- Optimize memory use when loading large catalogs to generate the product feed
+- Fix Feed Retrieve Action, was sending feed twice

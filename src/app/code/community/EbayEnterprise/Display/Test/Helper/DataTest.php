@@ -31,8 +31,8 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	}
 	/**
 	 * Test that the method EbayEnterprise_Display_Helper_Data::cleanString
-	 * will normalized a string with multiple carriage return and line feed
-	 * into a single line string.
+	 * will normalize a string with multiple carriage returns and/ or line feeds
+	 * into a single line.
 	 */
 	public function testCleanString()
 	{
