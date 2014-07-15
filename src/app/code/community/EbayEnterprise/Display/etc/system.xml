@@ -81,6 +81,17 @@
 							<show_in_store>1</show_in_store>
 							<depends><enabled>1</enabled></depends>
 						</product_feed_url>
+						<product_feed_buffer translate="label">
+							<label>Product Feed Buffer Size</label>
+							<comment><![CDATA[Maximum number of products in memory at a time while creating the feed.]]></comment>
+							<sort_order>500</sort_order>
+							<validate>validate-digits</validate>
+							<frontend_type>text</frontend_type>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+							<depends><enabled>1</enabled></depends>
+						</product_feed_buffer>
 					</fields>
 				</eems_display>
 			</groups>

@@ -52,8 +52,7 @@ class EbayEnterprise_Display_IndexController extends Mage_Core_Controller_Front_
 	{
 		$this->getResponse()
 			->setHeader('Content-Type', 'text/csv')
-			->appendBody($contents)
-			->sendResponse();
+			->appendBody($contents);
 	}
 	/**
 	 * Send not found.
@@ -61,7 +60,6 @@ class EbayEnterprise_Display_IndexController extends Mage_Core_Controller_Front_
 	protected function _sendNotFound()
 	{
 		$this->getResponse()
-			->setRawHeader('HTTP/1.1, 404')
-			->sendResponse();
+			->setRawHeader('HTTP/1.1, 404');
 	}
 }

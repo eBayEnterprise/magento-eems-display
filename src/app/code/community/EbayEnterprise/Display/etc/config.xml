@@ -23,6 +23,8 @@
 	<default>
 		<marketing_solutions>
 			<eems_display>
+				<!-- This value can be changed in admin interface: -->
+				<product_feed_buffer>1024</product_feed_buffer>
 				<!-- These are values you can change in the admin interface: -->
 				<!-- Disabled by default: -->
 				<enabled>0</enabled>

@@ -35,72 +35,52 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		}
 	}
 	/**
-	 * Puts an array of data into a file pointed to by fileHandle
-	 * @param $outputFileName (full path)
-	 * @param $dataRows
-	 * @return self
+	 * Writes an array as a string into the resource fh
+	 * @param $fh resource handle
+	 * @param $dataRow array of values to be written
+	 * @return int length of string written, or false on failure
 	 */
-	protected function _createCsvFile($outputFileName, $dataRows)
+	protected function _writeCsvRow($fh, array $dataRow)
 	{
-		$fh = fopen($outputFileName, 'w');
-		if ($fh === false) {
-			Mage::log('Cannot open file for writing: ' . $outputFileName);
-		} else {
-			foreach ($dataRows as $row) {
-				fputcsv( $fh, $row, self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
-			}
-			fclose($fh);
-		}
-		return $this;
+		return fputcsv($fh, $dataRow, self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
 	}
 	/**
 	 * Processes output files for one Store Group. Each store that has a
 	 * non-empty SiteId and is enabled gets a feed output. File name
 	 * is StoreId.csv and it's placed in the configured feed file path.
+	 * @param $stores array of Mage_Core_Model_Store(s) to process
+	 * @return self
 	 */
-	protected function _processStores($stores)
+	protected function _processStores(array $stores)
 	{
-		$helper   = Mage::helper('eems_display/config');
-		$dirName  = $helper->getFeedFilePath();
+		$helper  = Mage::helper('eems_display/config');
+		$dirName = $helper->getFeedFilePath();
 		foreach ($stores as $store) {
 			$storeId = $store->getId();
 			$siteId  = $helper->getSiteId($storeId);
 			if (empty($siteId) || !$helper->getIsEnabled($storeId)) {
+				// If this store doesn't have a site id, or isn't enabled for Display, skip it
 				continue;
 			}
-			$outputFileName = $dirName . DS . $storeId . '.csv';
-			$rows = array_merge(
-				array($this->_getProductDataHeader()),
-				$this->_getProductData($storeId)
-			);
-			$this->_createCsvFile($outputFileName, $rows);
+			$fh = fopen($dirName . DS . $storeId . '.csv', 'w');
+			if ($fh === false) {
+				// If we can't open the output file, complain to log and skip this store
+				Mage::log("Cannot open file for writing in {$dirName}.");
+				continue;
+			}
+			$this->_writeCsvRow($fh, array('Id', 'Name', 'Description', 'Price', 'Image URL', 'Page URL'));
+			$this->_writeDataRows($fh, $storeId);
+			fclose($fh);
 		}
 		return $this;
 	}
 	/**
-	 * Get the product collection for this store.
-	 * @return object (collection of Mage_Sales_Model_Order)
-	 */
-	protected function _getProductCollection($storeId=null)
-	{
-		return Mage::getResourceModel('catalog/product_collection')
-			->setStore($storeId)
-			->addAttributeToSelect(array('*'))
-			->addStoreFilter($storeId);
-	}
-	/**
-	 * Return an array of header row values.
-	 * @return array
-	 */
-	protected function _getProductDataHeader()
-	{
-		return array('Id', 'Name', 'Description', 'Price', 'Image URL', 'Page URL');
-	}
-	/**
 	 * Gets the product image URL, ensuring that it gets resized
-	 * @return image url, or blank if we can't get if figured out
+	 * @param $product One Mage_Catalog_Model_Product from a Collection
+	 * @param $storeId int which store Id this is for
+	 * @return image url, or blank if we can't get it figured out
 	 */
-	protected function _getResizedImage($product, $storeId)
+	protected function _getResizedImage(Mage_Catalog_Model_Product $product, $storeId)
 	{
 		$helper = Mage::helper('eems_display/config');
 		try {
@@ -117,30 +97,55 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 				);
 		} catch (Exception $e) {
 			$imageUrl = '';
-			Mage::log('Error sizing Image URL for ' . $product->getSku(), $e->getMessage());
+			Mage::log("Error sizing Image URL for {$product->getSku()}: {$e->getMessage()}");
 		}
 		return $imageUrl;
 	}
 	/**
 	 * Compile the product data for Fetchback into
 	 * an array that can be put into a CSV.
-	 * @return array
+	 * @param $fh resource handle
+	 * @param $storeId Store id
+	 * @return self
+	 *
+	 * The collection is formed thus:
+	 * 1. Since we are working with multiple stores, we use Mage:getResourceModel('catalog/product_collection') instead of
+	 * 		Mage::getModel('catalog/product')->getCollection() because the latter will load some store context we
+	 * 		prefer to control explicitly.
+	 * 2. setStore() is a method that will set up store context we do need. It does not set filtering.
+	 * 3. addAttributeToSelect() to get only the fields we need. Each product's _data will contain only these fields.
+	 * 4. addFieldToFilter() basically our 'where' clauses
+	 * 5. addStoreFilter() called without arguments defaults to the store most recently setStore()'d. Admin store is explicitly
+	 * 		ignored by addStoreFilter().
+	 * 6. setPageSize() in order to limit collection's use of memory. This is the number of products we'll load at once.
 	 */
-	protected function _getProductData($storeId)
+	protected function _writeDataRows($fh, $storeId)
 	{
-		$data     = array();
-		$products = $this->_getProductCollection($storeId);
-		$helper = Mage::helper('eems_display');
-		foreach($products as $product) {
-			$data[] = array(
-				$product->getSku(),
-				$helper->cleanString($product->getName()),
-				$helper->cleanString($product->getShortDescription()),
-				$product->getPrice(),
-				$this->_getResizedImage($product, $storeId),
-				$product->getProductUrl(),
-			);
+		$helper   = Mage::helper('eems_display');
+		$products = Mage::getResourceModel('catalog/product_collection')
+			->setStore($storeId)
+			->addAttributeToSelect(array('sku', 'name', 'short_description', 'price', 'url_key'))
+			->addFieldToFilter('visibility', array('neq'=>Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
+			->addFieldToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED)
+			->addStoreFilter()
+			->setPageSize(Mage::helper('eems_display/config')->getProductFeedPageSize());
+
+		$lastPage = $products->getLastPageNumber();
+		for($page = 1; $page <= $lastPage; $page++) {
+			$products->setCurPage($page);
+			foreach ($products as $product) {
+				$this->_writeCsvRow($fh,
+				array(
+					$product->getSku(),
+					$helper->cleanString($product->getName()),
+					$helper->cleanString($product->getShortDescription()),
+					$product->getPrice(),
+					$this->_getResizedImage($product, $storeId),
+					$product->getProductUrl(),
+				));
+			}
+			$products->clear();
 		}
-		return $data;
+		return $this;
 	}
 }

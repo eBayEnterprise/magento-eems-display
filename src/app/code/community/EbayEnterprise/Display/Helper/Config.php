@@ -28,6 +28,7 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	const EEMS_DISPLAY_PRODUCT_FEED_FRONTNAME_PATH       = 'frontend/routers/eems_display/args/frontName';
 	const EEMS_DISPLAY_SITE_ID_PATH                      = 'marketing_solutions/eems_display/site_id';
 	const EEMS_DISPLAY_SITE_ID_CHECKSUM_PATH             = 'marketing_solutions/eems_display/site_id_checksum';
+	const EEMS_DISPLAY_PRODUCT_FEED_PAGESIZE_PATH        = 'marketing_solutions/eems_display/product_feed_buffer';
 	/**
 	 * Get whether or not this extension is enabled.
 	 * @return boolean
@@ -75,6 +76,14 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	public function getProductFeedFrontName()
 	{
 		return Mage::getConfig()->getNode(self::EEMS_DISPLAY_PRODUCT_FEED_FRONTNAME_PATH);
+	}
+	/**
+	 * Gets the Page Size for the product collection; this is the number of products processed simultaneously
+	 * @return int
+	 */
+	public function getProductFeedPageSize()
+	{
+		return (int) Mage::getStoreConfig(self::EEMS_DISPLAY_PRODUCT_FEED_PAGESIZE_PATH) ? : 1;
 	}
 	/**
 	 * Gets the height configuration for feed images
