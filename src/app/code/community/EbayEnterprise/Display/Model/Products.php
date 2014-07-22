@@ -124,7 +124,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		$helper   = Mage::helper('eems_display');
 		$products = Mage::getResourceModel('catalog/product_collection')
 			->setStore($storeId)
-			->addAttributeToSelect(array('sku', 'name', 'short_description', 'price', 'url_key'))
+			->addAttributeToSelect(array('sku', 'name', 'short_description', 'price', 'url_key', 'image'))
 			->addFieldToFilter('visibility', array('neq'=>Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
 			->addFieldToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED)
 			->addStoreFilter()
