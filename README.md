@@ -28,7 +28,7 @@ Have questions? Contact our eBay Enterprise Display representatives. They’ll h
 
 ## Contact Us:
 
-__Email__—[DL-eBayEnt-displaysupport@ebay.com](mailto:DL-eBayEnt-displaysupport@ebay.com)  
+__Email__—[magentosupport@ebay.com](mailto:magentosupport@ebay.com)  
 __Phone__—888.343.6411 (option 4 for eBay Enterprise Display support)
 
 ---
