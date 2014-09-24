@@ -74,13 +74,6 @@
 				<class>EbayEnterprise_Display_Model</class>
 			</eems_display>
 		</models>
-		<resources>
-			<eemsdisplay_setup>
-				<setup>
-					<module>EbayEnterprise_Display</module>
-				</setup>
-			</eemsdisplay_setup>
-		</resources>
 	</global>
 	<frontend>
 		<layout>
