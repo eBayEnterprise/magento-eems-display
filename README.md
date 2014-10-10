@@ -19,12 +19,14 @@ Have questions? Contact our eBay Enterprise Display representatives. They’ll h
 
 ## Get Started:
 
+1. Contact eBay Enterprise Display to get your unique Site ID.†
 1. Download the extension onto your Magento dashboard.
-1. Contact eBay Enterprise Display to get your unique Site ID.
 1. Return to the Magento extension configuration page to input your Site ID and Site ID Checksum.
 1. Select “enable extension.”
 1. Finalize campaign strategy with a qualified eBay Enterprise account executive.
 1. Go live and start reaping the benefits.
+
+† Signed Insertion Order required to obtain Site ID. Contract minimum and monthly commitments apply. Merchants must be located in North America or United Kingdom. International campaigns are limited at this time.
 
 ## Contact Us:
 
