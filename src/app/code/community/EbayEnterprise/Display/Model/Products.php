@@ -68,7 +68,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 				Mage::log("Cannot open file for writing in {$dirName}.");
 				continue;
 			}
-			$this->_writeCsvRow($fh, array('Id', 'Name', 'Description', 'Price', 'Image URL', 'Page URL'));
+			$this->_writeCsvRow($fh, array('Id', 'Name', 'Description', 'Price', 'Special Price', 'Image URL', 'Page URL'));
 			$this->_writeDataRows($fh, $storeId);
 			fclose($fh);
 		}
@@ -101,6 +101,27 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		}
 		return $imageUrl;
 	}
+
+	/**
+	 * Checks if the special price has expired
+	 *
+	 * @param Mage_Catalog_Model_Product $product
+	 * @param $store
+	 * @return string | null special price or null if the special price has expired
+	 */
+	protected function _getValidSpecialPrice($product, $store=null)
+	{
+		$price = null;
+		$fromDate = $product->getSpecialFromDate();
+		$toDate = $product->getSpecialToDate();
+
+		if (Mage::app()->getLocale()->isStoreDateInInterval($store, $fromDate, $toDate)) {
+			$price = $product->getSpecialPrice();
+		}
+
+		return $price;
+	}
+
 	/**
 	 * Compile the product data for Fetchback into
 	 * an array that can be put into a CSV.
@@ -124,7 +145,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 		$helper   = Mage::helper('eems_display');
 		$products = Mage::getResourceModel('catalog/product_collection')
 			->setStore($storeId)
-			->addAttributeToSelect(array('sku', 'name', 'short_description', 'price', 'url_key', 'image'))
+			->addAttributeToSelect(array('sku', 'name', 'short_description', 'price', 'special_price', 'special_from_date', 'special_to_date', 'url_key', 'image'))
 			->addFieldToFilter('visibility', array('neq'=>Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
 			->addFieldToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED)
 			->addStoreFilter()
@@ -140,12 +161,14 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 					$helper->cleanString($product->getName()),
 					$helper->cleanString($product->getShortDescription()),
 					$product->getPrice(),
+					$this->_getValidSpecialPrice($product, $storeId),
 					$this->_getResizedImage($product, $storeId),
 					$product->getProductUrl(),
 				));
 			}
 			$products->clear();
 		}
+
 		return $this;
 	}
 }

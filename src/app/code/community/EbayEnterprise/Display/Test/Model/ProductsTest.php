@@ -83,6 +83,33 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	{
 		@unlink($this->_imageName);
 	}
+
+	/**
+	 * @return array
+	 */
+	public static function getValidSpecialPriceProvider()
+	{
+		// using explicit date string so we don't have to worry about
+		// locale specific formatting
+		// October 31, 2014 vs 10/31/2014 vs 31/10/2014
+
+		$today = date('F j, Y');
+		return array(
+			array(null, null, null, 1, null),
+			array(9.9900, 'January 1, 2014', 'January 31, 2014', 1, null),
+			array(9.9900, 'January 1, 2014', 'January 1, 2038', 1, 9.9900),
+			array(9.9900, 'January 1, 2037', 'January 1, 2038', 1, null),
+			array(9.9900, 'January 1, 2038', 'January 1, 2014', 1, null),
+			array(9.9900, null, 'January 1, 2038', 1, 9.9900),
+			array(9.9900, null, 'January 1, 2014', 1, null),
+			array(9.9900, 'January 1, 2014', null, 1, 9.9900),
+			array(9.9900, 'January 1, 2037', null, 1, null),
+			array(9.9900, null, null, 1, 9.9900),
+			array(9.9900, $today, null, 1, 9.9900),
+			array(9.9900, $today, $today, 1, 9.9900)
+		);
+	}
+
 	/**
 	 * Test that the method EbayEnterprise_Display_Model_Products::_getResizedImage
 	 * when passed in a product that has a valid image data loaded to it will
@@ -97,5 +124,38 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 		$this->assertStringEndsWith($expected, EcomDev_Utils_Reflection::invokeRestrictedMethod(
 			$feed, '_getResizedImage', array($product, Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID)
 		));
+	}
+
+	/**
+	 * @param $specialPrice
+	 * @param $fromDate
+	 * @param $toDate
+	 * @param $expectedReturn
+	 * @dataProvider getValidSpecialPriceProvider
+	 */
+	public function testGetValidSpecialPrice($specialPrice, $fromDate, $toDate, $store, $expectedReturn)
+	{
+		$product = $this->getModelMock('catalog/product',
+			array(
+				'getSpecialPrice',
+				'getSpecialFromDate',
+				'getSpecialToDate'
+			)
+		);
+		$product->expects(($this->any()))
+			->method('getSpecialPrice')
+			->will($this->returnValue($specialPrice));
+
+		$product->expects(($this->any()))
+			->method('getSpecialFromDate')
+			->will($this->returnValue($fromDate));
+
+		$product->expects(($this->any()))
+			->method('getSpecialToDate')
+			->will($this->returnValue($toDate));
+
+		$products = Mage::getModel('eems_display/products');
+		$price = EcomDev_Utils_Reflection::invokeRestrictedMethod($products, '_getValidSpecialPrice', array($product, $store));
+		$this->assertEquals($expectedReturn, $price);
 	}
 }
