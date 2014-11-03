@@ -87,7 +87,7 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	/**
 	 * @return array
 	 */
-	public static function getValidSpecialPriceProvider()
+	public 	function getValidSpecialPriceProvider()
 	{
 		// using explicit date string so we don't have to worry about
 		// locale specific formatting
@@ -127,32 +127,21 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	}
 
 	/**
-	 * @param $specialPrice
-	 * @param $fromDate
-	 * @param $toDate
-	 * @param $expectedReturn
+	 * @param float | null $specialPrice
+	 * @param string | null $fromDate
+	 * @param string | null $toDate
+	 * @param float | null $expectedReturn
 	 * @dataProvider getValidSpecialPriceProvider
 	 */
 	public function testGetValidSpecialPrice($specialPrice, $fromDate, $toDate, $store, $expectedReturn)
 	{
-		$product = $this->getModelMock('catalog/product',
+		$product = Mage::getModel('catalog/product',
 			array(
-				'getSpecialPrice',
-				'getSpecialFromDate',
-				'getSpecialToDate'
+				'special_price' => $specialPrice,
+				'special_from_date' => $fromDate,
+				'special_to_date' => $toDate
 			)
 		);
-		$product->expects(($this->any()))
-			->method('getSpecialPrice')
-			->will($this->returnValue($specialPrice));
-
-		$product->expects(($this->any()))
-			->method('getSpecialFromDate')
-			->will($this->returnValue($fromDate));
-
-		$product->expects(($this->any()))
-			->method('getSpecialToDate')
-			->will($this->returnValue($toDate));
 
 		$products = Mage::getModel('eems_display/products');
 		$price = EcomDev_Utils_Reflection::invokeRestrictedMethod($products, '_getValidSpecialPrice', array($product, $store));

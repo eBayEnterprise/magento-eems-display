@@ -106,7 +106,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 * Checks if the special price has expired
 	 *
 	 * @param Mage_Catalog_Model_Product $product
-	 * @param $store
+	 * @param int | null $store
 	 * @return string | null special price or null if the special price has expired
 	 */
 	protected function _getValidSpecialPrice($product, $store=null)
