@@ -34,6 +34,22 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 			}
 		}
 	}
+
+	/**
+	 * Implode an array into a single string and strip any HTML tags
+	 * Convert the stripped string back to an array and return
+	 *
+	 * @param array $dataRow
+	 * @return array
+	 */
+	protected function _stripHtml(array $dataRow)
+	{
+		$row = implode(',', $dataRow);
+		$noHtml = strip_tags($row);
+
+		return explode(',', $noHtml);
+	}
+
 	/**
 	 * Writes an array as a string into the resource fh
 	 * @param $fh resource handle
@@ -42,7 +58,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 */
 	protected function _writeCsvRow($fh, array $dataRow)
 	{
-		return fputcsv($fh, $dataRow, self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
+		return fputcsv($fh, $this->_stripHtml($dataRow), self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
 	}
 	/**
 	 * Processes output files for one Store Group. Each store that has a
