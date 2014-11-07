@@ -145,6 +145,16 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 				'<a href="http://some.site.com/path/to/image.jpg">http://some.site.com/path/to/image.jpg</a>',
 				'<a href="http://some.site.com/path/to/product.html">http://some.site.com/path/to/product.html</a></div></body></div></body>',
 				$expectedReturn
+			),
+			array(
+				'<body><div class="product"><p>sku123</p>',
+				'<h2>Product Name',
+				'<p>This is a really cool product. Here are some of its neat features: <ul><li>First feature </li><li>Next feature</li></p>',
+				'<p>9.99</p>',
+				'<p>7.99</p>',
+				'<a href="http://some.site.com/path/to/image.jpg">http://some.site.com/path/to/image.jpg</a>',
+				'<a href="http://some.site.com/path/to/product.html">http://some.site.com/path/to/product.html</a></div></body></div></body>',
+				$expectedReturn
 			)
 		);
 	}
