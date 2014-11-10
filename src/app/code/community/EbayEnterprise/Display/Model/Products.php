@@ -36,21 +36,6 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	}
 
 	/**
-	 * Implode an array into a single string and strip any HTML tags
-	 * Convert the stripped string back to an array and return
-	 *
-	 * @param array $dataRow
-	 * @return array
-	 */
-	protected function _stripHtml(array $dataRow)
-	{
-		$row = implode(',', $dataRow);
-		$noHtml = strip_tags($row);
-
-		return explode(',', $noHtml);
-	}
-
-	/**
 	 * Writes an array as a string into the resource fh
 	 * @param $fh resource handle
 	 * @param $dataRow array of values to be written
@@ -58,7 +43,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 */
 	protected function _writeCsvRow($fh, array $dataRow)
 	{
-		return fputcsv($fh, $this->_stripHtml($dataRow), self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
+		return fputcsv($fh, $dataRow, self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
 	}
 	/**
 	 * Processes output files for one Store Group. Each store that has a
@@ -158,7 +143,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 */
 	protected function _writeDataRows($fh, $storeId)
 	{
-		$helper   = Mage::helper('eems_display');
+		$helper = Mage::helper('eems_display');
 		$products = Mage::getResourceModel('catalog/product_collection')
 			->setStore($storeId)
 			->addAttributeToSelect(array('sku', 'name', 'short_description', 'price', 'special_price', 'special_from_date', 'special_to_date', 'url_key', 'image'))
@@ -175,7 +160,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 				array(
 					$product->getSku(),
 					$helper->cleanString($product->getName()),
-					$helper->cleanString($product->getShortDescription()),
+					$helper->stripHtml($product->getShortDescription()),
 					$product->getPrice(),
 					$this->_getValidSpecialPrice($product, $storeId),
 					$this->_getResizedImage($product, $storeId),

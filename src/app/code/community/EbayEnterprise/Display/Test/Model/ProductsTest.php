@@ -111,55 +111,6 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	}
 
 	/**
-	 * @return array
-	 */
-	public function stripHtmlProvider()
-	{
-		$expectedReturn = array(
-			'sku123',
-			'Product Name',
-			'This is a really cool product. Here are some of its neat features: First feature Next feature',
-			'9.99',
-			'7.99',
-			'http://some.site.com/path/to/image.jpg',
-			'http://some.site.com/path/to/product.html'
-		);
-
-		return array(
-			array(
-				'sku123',
-				'Product Name',
-				'This is a really cool product. Here are some of its neat features: First feature Next feature',
-				'9.99',
-				'7.99',
-				'http://some.site.com/path/to/image.jpg',
-				'http://some.site.com/path/to/product.html',
-				$expectedReturn
-			),
-			array(
-				'<body><div class="product"><p>sku123</p>',
-				'<h2>Product Name</h2>',
-				'<p>This is a really cool product. Here are some of its neat features: <ul><li>First feature </li><li>Next feature</li></p>',
-				'<p>9.99</p>',
-				'<p>7.99</p>',
-				'<a href="http://some.site.com/path/to/image.jpg">http://some.site.com/path/to/image.jpg</a>',
-				'<a href="http://some.site.com/path/to/product.html">http://some.site.com/path/to/product.html</a></div></body></div></body>',
-				$expectedReturn
-			),
-			array(
-				'<body><div class="product"><p>sku123</p>',
-				'<h2>Product Name',
-				'<p>This is a really cool product. Here are some of its neat features: <ul><li>First feature </li><li>Next feature</li></p>',
-				'<p>9.99</p>',
-				'<p>7.99</p>',
-				'<a href="http://some.site.com/path/to/image.jpg">http://some.site.com/path/to/image.jpg</a>',
-				'<a href="http://some.site.com/path/to/product.html">http://some.site.com/path/to/product.html</a></div></body></div></body>',
-				$expectedReturn
-			)
-		);
-	}
-
-	/**
 	 * Test that the method EbayEnterprise_Display_Model_Products::_getResizedImage
 	 * when passed in a product that has a valid image data loaded to it will
 	 * return the proper location of the image otherwise it will return a placeholder image.
@@ -195,33 +146,5 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 		$products = Mage::getModel('eems_display/products');
 		$price = EcomDev_Utils_Reflection::invokeRestrictedMethod($products, '_getValidSpecialPrice', array($product, $store));
 		$this->assertEquals($expectedReturn, $price);
-	}
-
-	/**
-	 * @param string $sku
-	 * @param string $name
-	 * @param string $description
-	 * @param string $price
-	 * @param string $specialPrice
-	 * @param string $image
-	 * @param string $url
-	 * @param array $expectedReturn
-	 * @dataProvider stripHtmlProvider
-	 */
-	public function testStripHtml($sku, $name, $description, $price, $specialPrice, $image, $url, $expectedReturn)
-	{
-		$dataRow = array(
-			$sku,
-			$name,
-			$description,
-			$price,
-			$specialPrice,
-			$image,
-			$url
-		);
-
-		$products = Mage::getModel('eems_display/products');
-		$row = EcomDev_Utils_Reflection::invokeRestrictedMethod($products, '_stripHtml', array($dataRow));
-		$this->assertSame($expectedReturn, $row);
 	}
 }

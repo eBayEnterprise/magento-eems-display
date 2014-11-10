@@ -65,4 +65,15 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return trim(preg_replace("/\s*[\r\n]+\s*/", ' ', $content));
 	}
+
+	/**
+	 * Strip HTML tags and trim whitespace from a string
+	 *
+	 * @param string $content
+	 * @return string
+	 */
+	public function stripHtml($content)
+	{
+		return $this->cleanString(strip_tags($content));
+	}
 }

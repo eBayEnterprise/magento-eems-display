@@ -18,6 +18,25 @@
 class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_Case
 {
 	/**
+	 * @return array
+	 */
+	public function stripHtmlProvider()
+	{
+		$expectedReturn = 'This is a really cool, neat product. Here are some of its neat features: First feature Next feature';
+
+		return array(
+			array(
+				'This is a really cool, neat product. Here are some of its neat features: First feature Next feature',
+				$expectedReturn
+			),
+			array(
+				"<body>\n\t<div class=\"product\">\n\t\t<p>This is a really cool, neat product. Here are some of its neat features: <ul><li>First feature </li><li>Next feature</li></p>\n",
+				$expectedReturn
+			),
+		);
+	}
+
+	/**
 	 */
 	public function testGetProductFeedUrl()
 	{
@@ -49,5 +68,15 @@ accordingly
 		$expect = 'This is a string with multiple lines break to prove the the clean helper method will normalize the string accordingly';
 
 		$this->assertSame($expect, Mage::helper('eems_display')->cleanString($content));
+	}
+
+	/**
+	 * @param string $content
+	 * @param array $expectedReturn
+	 * @dataProvider stripHtmlProvider
+	 */
+	public function testStripHtml($content, $expectedReturn)
+	{
+		$this->assertSame($expectedReturn, Mage::helper('eems_display')->stripHtml($content));
 	}
 }
