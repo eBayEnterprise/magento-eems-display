@@ -1,0 +1,4 @@
+-
+  - name
+  - 50
+  - CHAR_LENGTH(at_name_default.value) <= ?

@@ -15,35 +15,50 @@
  *
  */
 
-class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
+class EbayEnterprise_Display_Model_Products
 {
 	const CSV_FIELD_DELIMITER = ',';
 	const CSV_FIELD_ENCLOSURE = '"';
+	const CSV_FILE_EXTENSION = '.csv';
+
+	/** @var EbayEnterprise_Display_Helper_Config $_config */
+	protected $_config;
+	/** @var EbayEnterprise_MageLog_Helper_Data $_helper */
+	protected $_helper;
+	/** @var EbayEnterprise_Display_Model_File_Adapter $_adapter */
+	protected $_adapter;
+
+	public function __construct()
+	{
+		$this->_config = Mage::helper('eems_display/config');
+		$this->_helper = Mage::helper('eems_display');
+		$this->_adapter = Mage::getModel('eems_display/file_adapter', array(
+			'csv_field_delimiter' => static::CSV_FIELD_DELIMITER,
+			'csv_field_enclosure' => static::CSV_FIELD_ENCLOSURE
+		));
+	}
 	/**
 	 * Export product feeds. Get every store from every store group for every website.
 	 */
 	public function export()
 	{
-		// Email won't send if it's previously been sent. And I'm doing
-		// The installation notification here because it seemed as good a place
-		// as any, and seemed likely that we'd have something configured by now.
-		Mage::getModel('eems_display/email')->sendInstalledNotification();
+		Mage::dispatchEvent('eems_display_generate_product_feed_before', array());
 		foreach (Mage::app()->getWebsites() as $website) {
 			foreach ($website->getGroups() as $storeGroup) {
 				$this->_processStores($storeGroup->getStores());
 			}
 		}
+		Mage::dispatchEvent('eems_display_generate_product_feed_after', array());
 	}
 
 	/**
-	 * Writes an array as a string into the resource fh
-	 * @param $fh resource handle
-	 * @param $dataRow array of values to be written
-	 * @return int length of string written, or false on failure
+	 * The CSV file name per store id
+	 * @param  int $storeId
+	 * @return string
 	 */
-	protected function _writeCsvRow($fh, array $dataRow)
+	protected function _getCsvFile($storeId)
 	{
-		return fputcsv($fh, $dataRow, self::CSV_FIELD_DELIMITER, self::CSV_FIELD_ENCLOSURE);
+		return $this->_config->getFeedFilePath() . DS . $storeId . static::CSV_FILE_EXTENSION;
 	}
 	/**
 	 * Processes output files for one Store Group. Each store that has a
@@ -54,24 +69,23 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 */
 	protected function _processStores(array $stores)
 	{
-		$helper  = Mage::helper('eems_display/config');
-		$dirName = $helper->getFeedFilePath();
 		foreach ($stores as $store) {
 			$storeId = $store->getId();
-			$siteId  = $helper->getSiteId($storeId);
-			if (empty($siteId) || !$helper->getIsEnabled($storeId)) {
+			$siteId  = $this->_config->getSiteId($storeId);
+			if (empty($siteId) || !$this->_config->getIsEnabled($storeId)) {
 				// If this store doesn't have a site id, or isn't enabled for Display, skip it
 				continue;
 			}
-			$fh = fopen($dirName . DS . $storeId . '.csv', 'w');
-			if ($fh === false) {
+			try{
+				$this->_adapter->openCsvFile($this->_getCsvFile($storeId));
+			} catch (EbayEnterprise_Display_Model_File_Exception $e) {
 				// If we can't open the output file, complain to log and skip this store
-				Mage::log("Cannot open file for writing in {$dirName}.");
+				Mage::log($e->getMessage());
 				continue;
 			}
-			$this->_writeCsvRow($fh, array('Id', 'Name', 'Description', 'Price', 'Special Price', 'Image URL', 'Page URL'));
-			$this->_writeDataRows($fh, $storeId);
-			fclose($fh);
+			$this->_adapter->addNewCsvRow($this->_config->getFeedHeaderColumns());
+			$this->_writeDataRows($storeId);
+			$this->_adapter->closeCsvFile();
 		}
 		return $this;
 	}
@@ -83,18 +97,17 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 */
 	protected function _getResizedImage(Mage_Catalog_Model_Product $product, $storeId)
 	{
-		$helper = Mage::helper('eems_display/config');
 		try {
 			// Image implementation doesn't save the resize filed unless it's coerced into
 			// a string. Its (php) magic '__toString()' method is what actually resizes and saves
 			$imageUrl = (string) Mage::helper('catalog/image')
 				->init($product, 'image')
 				->keepAspectRatio(
-					$helper->getFeedImageKeepAspectRatio($storeId)
+					$this->_config->getFeedImageKeepAspectRatio($storeId)
 				)
 				->resize(
-					$helper->getFeedImageWidth($storeId),
-					$helper->getFeedImageHeight($storeId)
+					$this->_config->getFeedImageWidth($storeId),
+					$this->_config->getFeedImageHeight($storeId)
 				);
 		} catch (Exception $e) {
 			$imageUrl = '';
@@ -110,7 +123,7 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 * @param int | null $store
 	 * @return string | null special price or null if the special price has expired
 	 */
-	protected function _getValidSpecialPrice($product, $store=null)
+	protected function _getValidSpecialPrice(Mage_Catalog_Model_Product $product, $store=null)
 	{
 		$price = null;
 		$fromDate = $product->getSpecialFromDate();
@@ -122,13 +135,10 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 
 		return $price;
 	}
-
 	/**
-	 * Compile the product data for Fetchback into
-	 * an array that can be put into a CSV.
-	 * @param $fh resource handle
-	 * @param $storeId Store id
-	 * @return self
+	 * Build product collection
+	 * @param  int $storeId Store id
+	 * @return Mage_Catalog_Model_Resource_Product_Collection
 	 *
 	 * The collection is formed thus:
 	 * 1. Since we are working with multiple stores, we use Mage:getResourceModel('catalog/product_collection') instead of
@@ -141,35 +151,56 @@ class EbayEnterprise_Display_Model_Products extends Mage_Core_Model_Abstract
 	 * 		ignored by addStoreFilter().
 	 * 6. setPageSize() in order to limit collection's use of memory. This is the number of products we'll load at once.
 	 */
-	protected function _writeDataRows($fh, $storeId)
+	protected function _buildProductCollection($storeId)
 	{
-		$helper = Mage::helper('eems_display');
-		$products = Mage::getResourceModel('catalog/product_collection')
+		$collection = Mage::getResourceModel('eems_display/product_collection')
 			->setStore($storeId)
 			->addAttributeToSelect(array('sku', 'name', 'short_description', 'price', 'special_price', 'special_from_date', 'special_to_date', 'url_key', 'image'))
-			->addFieldToFilter('visibility', array('neq'=>Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
+			->addFieldToFilter('visibility', array('neq' => Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
 			->addFieldToFilter('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED)
 			->addStoreFilter()
-			->setPageSize(Mage::helper('eems_display/config')->getProductFeedPageSize());
-
+			->addAttributeCharLimitToFilter('name', $this->_config->getProductTitleCharLimit())
+			->addInStockToFilter() // Filter out any product with an out of stock inventory availability status
+			->setPageSize($this->_config->getProductFeedPageSize());
+		return $collection;
+	}
+	/**
+	 * Compile the product data for display into
+	 * an array that can be put into a CSV.
+	 * @param  int $storeId Store id
+	 * @return self
+	 */
+	protected function _writeDataRows($storeId)
+	{
+		$products = $this->_buildProductCollection($storeId);
 		$lastPage = $products->getLastPageNumber();
 		for($page = 1; $page <= $lastPage; $page++) {
 			$products->setCurPage($page);
 			foreach ($products as $product) {
-				$this->_writeCsvRow($fh,
-				array(
-					$product->getSku(),
-					$helper->cleanString($product->getName()),
-					$helper->stripHtml($product->getShortDescription()),
-					$product->getPrice(),
-					$this->_getValidSpecialPrice($product, $storeId),
-					$this->_getResizedImage($product, $storeId),
-					$product->getProductUrl(),
-				));
+				$this->_adapter->addNewCsvRow($this->_getDataRow($product, $storeId));
 			}
 			$products->clear();
 		}
 
 		return $this;
+	}
+	/**
+	 * Return an array of CSV row data.
+	 * @param  Mage_Catalog_Model_Product $product
+	 * @param  int $storeId
+	 * @return array
+	 */
+	protected function _getDataRow(Mage_Catalog_Model_Product $product, $storeId)
+	{
+		return array(
+			$product->getSku(),
+			$this->_helper->cleanString($product->getName()),
+			$this->_helper->stripHtml($product->getShortDescription()),
+			$product->getPrice(),
+			$this->_getValidSpecialPrice($product, $storeId),
+			$this->_getResizedImage($product, $storeId),
+			$product->getProductUrl(),
+			$product->getAvailableInventory(),
+		);
 	}
 }

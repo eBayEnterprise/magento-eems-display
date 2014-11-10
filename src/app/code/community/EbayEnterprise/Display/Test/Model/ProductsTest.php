@@ -23,6 +23,9 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	 * @var string, hold the full path to the product image.
 	 */
 	protected $_imageName;
+
+	/** @var EbayEnterprise_Display_Model_Products $_products */
+	protected $_products;
 	/**
 	 * Setting update product image
 	 * Move the image in the fixture under magento media
@@ -32,6 +35,7 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	public function setUp()
 	{
 		parent::setUp();
+		$this->_products = Mage::getModel('eems_display/products');
 		$baseImage = 'test-product-img.jpg';
 		$this->_imageName = Mage::getBaseDir('media') .
 			DIRECTORY_SEPARATOR . 'catalog' .
@@ -146,5 +150,56 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 		$products = Mage::getModel('eems_display/products');
 		$price = EcomDev_Utils_Reflection::invokeRestrictedMethod($products, '_getValidSpecialPrice', array($product, $store));
 		$this->assertEquals($expectedReturn, $price);
+	}
+	/**
+	 * This is a procedure test examining that once the method
+	 * EbayEnterprise_Display_Model_Products::_buildProductCollection is invoked
+	 * passing in store id it will build a `EbayEnterprise_Display_Model_Resource_Product_Collection`
+	 * collection object adding the right filters to get products that are only enabled, visible, in-stock,
+	 * and product title that are less or equal to the default character limit in the configuration.
+	 * @param int $storeId
+	 * @param array $attributesToSelect
+	 * @param int $titleCharLimit
+	 * @param int $pageSize
+	 * @dataProvider dataProvider
+	 * @loadFixture testBuildProductCollection.yaml
+	 */
+	public function testBuildProductCollection($storeId, array $attributesToSelect, $titleCharLimit, $pageSize)
+	{
+		$collection = $this->getResourceModelMock('eems_display/product_collection', array(
+			'setStore', 'addAttributeToSelect', 'addFieldToFilter', 'addStoreFilter', 'addAttributeCharLimitToFilter', 'setPageSize', 'addInStockToFilter'
+		));
+		$collection->expects($this->once())
+			->method('setStore')
+			->with($this->identicalTo($storeId))
+			->will($this->returnSelf());
+		$collection->expects($this->once())
+			->method('addAttributeToSelect')
+			->with($this->identicalTo($attributesToSelect))
+			->will($this->returnSelf());
+		$collection->expects($this->exactly(2))
+			->method('addFieldToFilter')
+			->will($this->returnValueMap(array(
+				array('visibility', array('neq' => Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE), $collection),
+				array('status', Mage_Catalog_Model_Product_Status::STATUS_ENABLED, $collection)
+			)));
+		$collection->expects($this->once())
+			->method('addStoreFilter')
+			->with($this->identicalTo(null))
+			->will($this->returnSelf());
+		$collection->expects($this->once())
+			->method('addAttributeCharLimitToFilter')
+			->with($this->identicalTo('name'), $titleCharLimit)
+			->will($this->returnSelf());
+		$collection->expects($this->once())
+			->method('addInStockToFilter')
+			->will($this->returnSelf());
+		$collection->expects($this->once())
+			->method('setPageSize')
+			->with($this->identicalTo($pageSize))
+			->will($this->returnSelf());
+		$this->replaceByMock('resource_model', 'eems_display/product_collection', $collection);
+
+		$this->assertSame($collection, EcomDev_Utils_Reflection::invokeRestrictedMethod($this->_products, '_buildProductCollection', array($storeId)));
 	}
 }

@@ -76,4 +76,13 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return $this->cleanString(strip_tags($content));
 	}
+	/**
+	 * Make a string value SQL safe
+	 * @param string $value
+	 * @return string
+	 */
+	public function makeSqlSafe($value)
+	{
+		return str_replace("'", "", Mage::getSingleton('core/resource')->getConnection('default_write')->quote($value));
+	}
 }

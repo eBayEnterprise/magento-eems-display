@@ -1,0 +1,3 @@
+config:
+  default/marketing_solutions/eems_display/product_feed_buffer: 1024
+  default/marketing_solutions/eems_display/feed/title_char_limit: 50

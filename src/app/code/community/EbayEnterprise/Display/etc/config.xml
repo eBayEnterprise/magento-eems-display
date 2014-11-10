@@ -32,7 +32,7 @@
 				<site_id />
 				<!-- Feed values you cannot change in the admin interface: -->
 				<feed>
-				<!-- Path is relative to Mage::getBase('var'); -->
+					<!-- Path is relative to Mage::getBase('var'); -->
 					<file_path>eems_display</file_path>
 					<image>
 						<!-- As per spec, 150x150: -->
@@ -41,6 +41,9 @@
 						<!-- 1 = do not distort, 150x150 is a constraint: -->
 						<keep_aspect_ratio>1</keep_aspect_ratio>
 					</image>
+					<!-- Use to filter the number of character a product title should have in order to add the product to the feed -->
+					<title_char_limit>50</title_char_limit>
+					<header_columns>Id,Name,Description,Price,Special Price,Image URL,Page URL,Inventory</header_columns>
 				</feed>
 				<!-- Installation Email -->
 				<install_email>
@@ -72,8 +75,23 @@
 		<models>
 			<eems_display>
 				<class>EbayEnterprise_Display_Model</class>
+				<resourceModel>eems_display_resource</resourceModel>
 			</eems_display>
+			<eems_display_resource>
+				<class>EbayEnterprise_Display_Model_Resource</class>
+			</eems_display_resource>
 		</models>
+		<events>
+			<eems_display_generate_product_feed_before>
+				<observers>
+					<eems_display_installation_email_alert>
+						<class>eems_display/email</class>
+						<method>sendInstalledNotification</method>
+						<type>singleton</type>
+					</eems_display_installation_email_alert>
+				</observers>
+			</eems_display_generate_product_feed_before>
+		</events>
 	</global>
 	<frontend>
 		<layout>
@@ -102,9 +120,12 @@
 	<crontab>
 		<jobs>
 			<eems_display_products_feed>
-				<schedule><cron_expr>0 */3 * * *</cron_expr>
+				<schedule>
+					<cron_expr>0 */3 * * *</cron_expr>
 				</schedule>
-				<run><model>eems_display/products::export</model></run>
+				<run>
+					<model>eems_display/observer::generateProductFeed</model>
+				</run>
 			</eems_display_products_feed>
 		</jobs>
 	</crontab>

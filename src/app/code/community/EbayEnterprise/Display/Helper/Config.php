@@ -29,6 +29,8 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	const EEMS_DISPLAY_SITE_ID_PATH                      = 'marketing_solutions/eems_display/site_id';
 	const EEMS_DISPLAY_SITE_ID_CHECKSUM_PATH             = 'marketing_solutions/eems_display/site_id_checksum';
 	const EEMS_DISPLAY_PRODUCT_FEED_PAGESIZE_PATH        = 'marketing_solutions/eems_display/product_feed_buffer';
+	const EEMS_DISPLAY_PRODUCT_FEED_TITLE_CHAR_LIMIT     = 'marketing_solutions/eems_display/feed/title_char_limit';
+	const EEMS_DISPLAY_PRODUCT_FEED_HEADER_COLUMNS       = 'marketing_solutions/eems_display/feed/header_columns';
 	/**
 	 * Get whether or not this extension is enabled.
 	 * @return boolean
@@ -108,5 +110,23 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	public function getFeedImageKeepAspectRatio($storeId)
 	{
 		return (bool) Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_IMAGE_KEEP_ASPECT_RATIO_PATH, $storeId);
+	}
+	/**
+	 * Gets the maximum number of characters a product title should be limited by.
+	 * @param  string|Mage_Core_Model_Store $store
+	 * @return int
+	 */
+	public function getProductTitleCharLimit($store=null)
+	{
+		return (int) Mage::getStoreConfig(self::EEMS_DISPLAY_PRODUCT_FEED_TITLE_CHAR_LIMIT, $store);
+	}
+	/**
+	 * Get product feed header columns from configuration.
+	 * @param  string|Mage_Core_Model_Store $store
+	 * @return array
+	 */
+	public function getFeedHeaderColumns($store=null)
+	{
+		return explode(',', Mage::getStoreConfig(self::EEMS_DISPLAY_PRODUCT_FEED_HEADER_COLUMNS, $store));
 	}
 }

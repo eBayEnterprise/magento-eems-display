@@ -1,0 +1,10 @@
+-
+  - cataloginventory/stock_item
+  - cataloginventory_stock_item
+  - item_stock.product_id=e.entity_id
+  -
+     product_qty: qty
+     safety_stock: min_qty
+  -
+     available_inventory: (item_stock.qty - item_stock.min_qty)
+  - item_stock.is_in_stock=?
