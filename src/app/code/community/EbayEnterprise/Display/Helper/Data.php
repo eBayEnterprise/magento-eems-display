@@ -60,6 +60,7 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	 * Strip out Carriage Return (CR) and Line Feed (LF) characters from a string
 	 * @param string $content
 	 * @param string
+	 * @return string
 	 */
 	public function cleanString($content)
 	{
@@ -67,14 +68,40 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	}
 
 	/**
-	 * Strip HTML tags and trim whitespace from a string
+	 * Strip HTML and PHP tags from a string
 	 *
 	 * @param string $content
 	 * @return string
 	 */
 	public function stripHtml($content)
 	{
-		return $this->cleanString(strip_tags($content));
+		return strip_tags($content);
+	}
+
+	/**
+	 * Strip all non-ascii characters from the string
+	 * Removes all characters not in the range 0x20 - 0x7f
+	 *
+	 * @param string $content
+	 * @return string
+	 */
+	public function stripNonAsciiChars($content)
+	{
+		return preg_replace('/[^(\x20-\x7E)]*/','', $content);
+	}
+
+	/**
+	 * Clean all unwanted characters from a string in preparation for
+	 * inclusion in the feed
+	 *
+	 * Strips CR, LF, HTML, non-ascii and extra white space
+	 *
+	 * @param string $content
+	 * @return string
+	 */
+	public function cleanStringForFeed($content)
+	{
+		return $this->cleanString($this->stripHtml($this->stripNonAsciiChars($content)));
 	}
 	/**
 	 * Make a string value SQL safe

@@ -195,7 +195,7 @@ class EbayEnterprise_Display_Model_Products
 		return array(
 			$product->getSku(),
 			$this->_helper->cleanString($product->getName()),
-			$this->_helper->stripHtml($product->getShortDescription()),
+			$this->_helper->cleanStringForFeed($product->getShortDescription()),
 			$product->getPrice(),
 			$this->_getValidSpecialPrice($product, $storeId),
 			$this->_getResizedImage($product, $storeId),

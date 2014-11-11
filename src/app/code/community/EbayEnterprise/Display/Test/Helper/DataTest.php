@@ -30,7 +30,7 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 				$expectedReturn
 			),
 			array(
-				"<body>\n\t<div class=\"product\">\n\t\t<p>This is a really cool, neat product. Here are some of its neat features: <ul><li>First feature </li><li>Next feature</li></p>\n",
+				"<body>\n\t<div class=\"product\">\n\t\t<p>This is a really cool, neat product. Here are some of its neat features: <ul><li>First featureu00a9 </li><li>Next feature</li><li></li></p>\n",
 				$expectedReturn
 			),
 		);
