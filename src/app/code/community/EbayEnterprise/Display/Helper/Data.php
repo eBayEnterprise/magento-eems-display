@@ -97,4 +97,26 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return str_replace("'", "", Mage::getSingleton('core/resource')->getConnection('default_write')->quote($value));
 	}
+
+	/**
+	 * @param string $filename file name or url
+	 * @param int $width
+	 * @param int $height
+	 * @return bool
+	 */
+	public function isValidImage($filename, $width = 0, $height = 0)
+	{
+		if (!file_exists($filename)) {
+			return false;
+		}
+
+		// if $width or $height === 0 then just validate the file or url exists
+		if (!($width && $height) && file_exists($filename)) {
+			return true;
+		}
+
+		$info = getimagesize($filename);
+
+		return (($info[0] === $width) && ($info[1] === $height));
+	}
 }
