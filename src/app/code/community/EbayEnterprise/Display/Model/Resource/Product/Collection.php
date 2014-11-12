@@ -26,8 +26,9 @@ class EbayEnterprise_Display_Model_Resource_Product_Collection extends Mage_Cata
 	public function addAttributeCharLimitToFilter($name, $limit=50)
 	{
 		$sqlSafeName = Mage::helper('eems_display')->makeSqlSafe($name);
+		$whereClause = 'CHAR_LENGTH(at_' . $sqlSafeName . '_default.value) <= ?';
 		$this->addFieldToFilter($name, array('neq' => null))
-			->getSelect()->where("CHAR_LENGTH(at_${sqlSafeName}_default.value) <= ?", $limit);
+			->getSelect()->where($whereClause, $limit);
 		return $this;
 	}
 	/**
