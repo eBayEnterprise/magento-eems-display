@@ -68,17 +68,6 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	}
 
 	/**
-	 * Strip HTML and PHP tags from a string
-	 *
-	 * @param string $content
-	 * @return string
-	 */
-	public function stripHtml($content)
-	{
-		return strip_tags($content);
-	}
-
-	/**
 	 * Strip all non-ascii characters from the string
 	 * Removes all characters not in the range 0x20 - 0x7f
 	 *
@@ -101,7 +90,9 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function cleanStringForFeed($content)
 	{
-		return $this->cleanString($this->stripHtml($this->stripNonAsciiChars($content)));
+		$helper = Mage::helper('core');
+
+		return $this->cleanString($helper->stripTags($this->stripNonAsciiChars($helper->removeAccents($content))));
 	}
 	/**
 	 * Make a string value SQL safe
