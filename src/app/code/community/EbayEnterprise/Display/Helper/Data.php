@@ -85,10 +85,11 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	 *
 	 * Strips CR, LF, HTML, non-ascii and extra white space
 	 *
-	 * - Decode any HTML encoded characters (ie.: &agrave;)
-	 * - Converts accented characters into their unaccented equivalents
-	 * - Strip all non-ascii characters
+	 *
 	 * - Strip any HTML and PHP tags
+	 * - Converts accented characters into their unaccented equivalents
+	 * - Decode any HTML encoded characters (ie.: &agrave;)
+	 * - Strip all non-ascii characters
 	 * - Strip CR and LF and extra white space
 	 *
 	 * @param string $content
@@ -97,8 +98,7 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	public function cleanStringForFeed($content)
 	{
 		$helper = Mage::helper('core');
-
-		return $this->cleanString($helper->stripTags($this->stripNonAsciiChars($helper->removeAccents(html_entity_decode($content)))));
+		return $this->cleanString($this->stripNonAsciiChars(html_entity_decode($helper->removeAccents($helper->stripTags($content)))));
 	}
 	/**
 	 * Make a string value SQL safe

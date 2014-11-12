@@ -20,19 +20,23 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	/**
 	 * @return array
 	 */
-	public function stripHtmlProvider()
+	public function cleanStringForFeedProvider()
 	{
-		$expectedReturn = 'This is a really cool, neat product. Here are some of its neat features: First feature Next feature';
+		$expectedReturn = 'This is a really cool, neat product. Here are some of its neat features: First (premiere) feature Next feature';
 
 		return array(
 			array(
-				'This is a really cool, neat product. Here are some of its neat features: First feature Next feature',
+				'This is a really cool, neat product. Here are some of its neat features: First (premiere) feature Next feature',
 				$expectedReturn
 			),
 			array(
-				"<body>\n\t<div class=\"product\">\n\t\t<p>This is a really cool, neat product. Here are some of its neat features: <ul><li>First featureu00a9 </li><li>Next feature</li><li></li></p>\n",
+				"<body>\n\t<div class=\"product\">\n\t\t<p>This is a really cool&reg;®, neat product. Here are some of its neat features: <ul><li>First (première) feature </li><li>Next feature</li><li>日本</li></p>\n",
 				$expectedReturn
 			),
+			array(
+				'Weiß, Goldmann, Göbel, Weiss, Göthe, Goethe und Götz',
+				'Weiss, Goldmann, Gobel, Weiss, Gothe, Goethe und Gotz'
+			)
 		);
 	}
 
@@ -73,10 +77,22 @@ accordingly
 	/**
 	 * @param string $content
 	 * @param array $expectedReturn
-	 * @dataProvider stripHtmlProvider
+	 * @dataProvider cleanStringForFeedProvider
 	 */
-	public function testStripHtml($content, $expectedReturn)
+	public function testCleanStringForFeed($content, $expectedReturn)
 	{
-		$this->assertSame($expectedReturn, Mage::helper('eems_display')->stripHtml($content));
+		$this->assertSame($expectedReturn, Mage::helper('eems_display')->cleanStringForFeed($content));
+	}
+
+	/**
+	 * Test that EbayEnterprise_display_Helper_Data::stripNonAsciiCharacters
+	 * properly removes any character above code 0x7e
+	 */
+	public function testStripNonAsciiChars()
+	{
+		$this->assertSame(
+			"This string contains some non-ascii characters here, , and here, ",
+			Mage::helper('eems_display')->stripNonAsciiChars("This string contains some non-ascii characters here, ®, and here, 日本")
+		);
 	}
 }
