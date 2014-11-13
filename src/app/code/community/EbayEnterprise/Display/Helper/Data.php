@@ -161,4 +161,25 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 
 		return ($imageInfo && ($imageInfo[0] === $width) && ($imageInfo[1] === $height));
 	}
+	/**
+	 * Return a DateInterval instance between two dates.
+	 * @param  string $startDate
+	 * @param  string $endDate
+	 * @return DateInterval
+	 */
+	public function getDateInterval($startDate, $endDate)
+	{
+		$timeZone = new DateTimeZone(Mage::getStoreConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE));
+		$newDate = new DateTime($startDate, $timeZone);
+		return $newDate->diff(new DateTime($endDate, $timeZone));
+	}
+	/**
+	 * Calculate time in difference in minutes from a passing DateInterval instance.
+	 * @param  DateInterval $interval
+	 * @return float
+	 */
+	public function calculateTimeElapseInMinutes(DateInterval $interval)
+	{
+		return (($interval->y * 365 * 24 * 60) + ($interval->m * 30 * 24 * 60) + ($interval->d * 24 * 60) + ($interval->h * 60) + $interval->i);
+	}
 }

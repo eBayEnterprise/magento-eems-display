@@ -39,16 +39,22 @@ class EbayEnterprise_Display_Model_Products
 	}
 	/**
 	 * Export product feeds. Get every store from every store group for every website.
+	 * @return self
 	 */
 	public function export()
 	{
-		Mage::dispatchEvent('eems_display_generate_product_feed_before', array());
-		foreach (Mage::app()->getWebsites() as $website) {
-			foreach ($website->getGroups() as $storeGroup) {
-				$this->_processStores($storeGroup->getStores());
+		try{
+			Mage::dispatchEvent('eems_display_generate_product_feed_before', array());
+			foreach (Mage::app()->getWebsites() as $website) {
+				foreach ($website->getGroups() as $storeGroup) {
+					$this->_processStores($storeGroup->getStores());
+				}
 			}
+			Mage::dispatchEvent('eems_display_generate_product_feed_after', array());
+		} catch (EbayEnterprise_Display_Model_File_Lock_Exception $e) {
+			Mage::log($e->getMessage());
 		}
-		Mage::dispatchEvent('eems_display_generate_product_feed_after', array());
+		return $this;
 	}
 
 	/**

@@ -44,6 +44,18 @@
 					<!-- Use to filter the number of character a product title should have in order to add the product to the feed -->
 					<title_char_limit>50</title_char_limit>
 					<header_columns>Id,Name,Description,Price,Special Price,Image URL,Page URL,Inventory</header_columns>
+					<lock_file_name>eems_display_product_feed.lock</lock_file_name>
+					<last_run_datetime/>
+					<last_run_duration/>
+					<admin_notice>
+						<last_run_date_text>Feed last run date: %s</last_run_date_text>
+						<last_run_duration_text>Feed Duration: %s minute(s)</last_run_duration_text>
+						<never_run_text>Feed has never ran.</never_run_text>
+						<lock_file_exist_text>A new product feed is currently being generated.</lock_file_exist_text>
+						<lock_file_exist_button_text>Remove lock file</lock_file_exist_button_text>
+						<remove_lock_file_text>Removing the lock file was a success</remove_lock_file_text>
+						<fail_to_remove_lock_file_text>Lock file could not be removed</fail_to_remove_lock_file_text>
+					</admin_notice>
 				</feed>
 				<!-- Installation Email -->
 				<install_email>
@@ -84,13 +96,31 @@
 		<events>
 			<eems_display_generate_product_feed_before>
 				<observers>
+					<eems_display_feed_lock_file_check>
+						<class>eems_display/observer</class>
+						<method>runCheckLockFile</method>
+						<type>model</type>
+					</eems_display_feed_lock_file_check>
+				</observers>
+			</eems_display_generate_product_feed_before>
+			<eems_display_generate_product_feed_before>
+				<observers>
 					<eems_display_installation_email_alert>
 						<class>eems_display/email</class>
 						<method>sendInstalledNotification</method>
-						<type>singleton</type>
+						<type>model</type>
 					</eems_display_installation_email_alert>
 				</observers>
 			</eems_display_generate_product_feed_before>
+			<eems_display_generate_product_feed_after>
+				<observers>
+					<eems_display_feed_lock_file_check>
+						<class>eems_display/observer</class>
+						<method>runLockFileRemoval</method>
+						<type>model</type>
+					</eems_display_feed_lock_file_check>
+				</observers>
+			</eems_display_generate_product_feed_after>
 		</events>
 	</global>
 	<frontend>
@@ -117,6 +147,35 @@
 			</eems_display>
 		</routers>
 	</frontend>
+	<admin>
+		<routers>
+			<adminhtml>
+				<args>
+					<modules>
+						<EbayEnterprise_Display after="Mage_Adminhtml">EbayEnterprise_Display</EbayEnterprise_Display>
+					</modules>
+				</args>
+			</adminhtml>
+		</routers>
+	</admin>
+	<adminhtml>
+		<translate>
+			<modules>
+				<EbayEnterprise_Display>
+					<files>
+						<default>EbayEnterprise_Display.csv</default>
+					</files>
+				</EbayEnterprise_Display>
+			</modules>
+		</translate>
+		<layout>
+			<updates>
+				<eems_display>
+					<file>eems_display/eems_display.xml</file>
+				</eems_display>
+			</updates>
+		</layout>
+	</adminhtml>
 	<crontab>
 		<jobs>
 			<eems_display_products_feed>

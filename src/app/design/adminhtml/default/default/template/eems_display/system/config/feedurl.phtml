@@ -1,0 +1,42 @@
+<?php
+/**
+ * Copyright (c) 2014 eBay Enterprise, Inc.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the eBay Enterprise
+ * Magento Extensions End User License Agreement
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf
+ *
+ * @copyright   Copyright (c) 2014 eBay Enterprise, Inc. (http://www.ebayenterprise.com/)
+ * @license     http://www.ebayenterprise.com/files/pdf/Magento_Connect_Extensions_EULA_050714.pdf  eBay Enterprise Magento Extensions End User License Agreement
+ *
+ */
+?>
+<?php
+/**
+ * @see EbayEnterprise_Display_Block_Adminhtml_System_Config_Form_Field_Feedurl
+ */
+?>
+<?php $htmlId = $this->getHtmlId(); ?>
+<a id="<?php echo $htmlId ?>" name="<?php echo $this->getName() ?>" href="#"><?php echo $this->getEscapedValue() ?></a>
+<p class="note notice"><?php echo $this->getLastRunText() ?></p>
+<?php if ($this->getIsLockFileExist()): ?>
+<p class="note notice"><?php echo $this->getLockFileExistText() ?></p>
+<button onclick="feedUrl.removeLockFile()" class="scalable" type="button" id="<?php echo $htmlId ?>_remove_lock_file">
+	<span id="eems_display_lockfile_deleting_result"><?php echo $this->getEscapedButtonLabel() ?></span>
+</button>
+<?php endif; ?>
+<script type="text/javascript">
+//<![CDATA[
+	document.observe("dom:loaded", function() {
+		feedUrl = new EemsDisplayFeedUrl();
+		feedUrl.elemId = '<?php echo $htmlId ?>';
+		feedUrl.ajaxUrl = '<?php echo $this->getAjaxUrl() ?>';
+		feedUrl.failMsg = '<?php echo $this->getFailToRemoveLockFileText() ?>';
+		feedUrl.setup();
+	});
+//]]>
+</script>

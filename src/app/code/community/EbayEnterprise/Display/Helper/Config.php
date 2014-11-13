@@ -31,6 +31,10 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	const EEMS_DISPLAY_PRODUCT_FEED_PAGESIZE_PATH        = 'marketing_solutions/eems_display/product_feed_buffer';
 	const EEMS_DISPLAY_PRODUCT_FEED_TITLE_CHAR_LIMIT     = 'marketing_solutions/eems_display/feed/title_char_limit';
 	const EEMS_DISPLAY_PRODUCT_FEED_HEADER_COLUMNS       = 'marketing_solutions/eems_display/feed/header_columns';
+	const EEMS_DISPLAY_PRODUCT_FEED_LOCK_FILE_NAME       = 'marketing_solutions/eems_display/feed/lock_file_name';
+	const EEMS_DISPLAY_PRODUCT_FEED_LAST_RUN_DATETIME    = 'marketing_solutions/eems_display/feed/last_run_datetime';
+	const EEMS_DISPLAY_PRODUCT_FEED_LAST_RUN_DURATION    = 'marketing_solutions/eems_display/feed/last_run_duration';
+	const EEMS_DISPLAY_PRODUCT_FEED_LAST_ADMIN_NOTICE    = 'marketing_solutions/eems_display/feed/admin_notice';
 	/**
 	 * Get whether or not this extension is enabled.
 	 * @return boolean
@@ -52,6 +56,14 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 		return Mage::getStoreConfig(self::EEMS_DISPLAY_SITE_ID_PATH, $storeId);
 	}
 	/**
+	 * Get feed file path as configured in the configuration.
+	 * @return string
+	 */
+	public function getFeedFileRelativePath()
+	{
+		return Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_FILE_PATH);
+	}
+	/**
 	 * The Feed File path, files are created here and served from here. Path is created if it
 	 * does not exist. Throws error if we can't create it, or we can't write it.
 	 * @throws EbayEnterprise_Display_Model_Error_Exception
@@ -59,7 +71,7 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	 */
 	public function getFeedFilePath()
 	{
-		$path = Mage::getBaseDir('var') . DS . Mage::getStoreConfig(self::EEMS_DISPLAY_FEED_FILE_PATH);
+		$path = Mage::getBaseDir('var') . DS . $this->getFeedFileRelativePath();
 		if (!file_exists($path) && !@mkdir($path, 0700, true)) { // Recursively create full feed file path
 			throw new EbayEnterprise_Display_Model_Error_Exception('Cannot create specified path: ' . $path);
 		}
@@ -128,5 +140,41 @@ class EbayEnterprise_Display_Helper_Config extends Mage_Core_Helper_Abstract
 	public function getFeedHeaderColumns($store=null)
 	{
 		return explode(',', Mage::getStoreConfig(self::EEMS_DISPLAY_PRODUCT_FEED_HEADER_COLUMNS, $store));
+	}
+	/**
+	 * Get product feed lock file name from configuration.
+	 * @param  string|Mage_Core_Model_Store $store
+	 * @return string
+	 */
+	public function getFeedLockFilename($store=null)
+	{
+		return Mage::getStoreConfig(self::EEMS_DISPLAY_PRODUCT_FEED_LOCK_FILE_NAME, $store);
+	}
+	/**
+	 * Get product feed last run date time from configuration.
+	 * @param  string|Mage_Core_Model_Store $store
+	 * @return string
+	 */
+	public function getFeedLastRunDatetime($store=null)
+	{
+		return Mage::getStoreConfig(self::EEMS_DISPLAY_PRODUCT_FEED_LAST_RUN_DATETIME, $store);
+	}
+	/**
+	 * Get product feed last run duration from configuration.
+	 * @param  string|Mage_Core_Model_Store $store
+	 * @return string
+	 */
+	public function getFeedLastRunDuration($store=null)
+	{
+		return Mage::getStoreConfig(self::EEMS_DISPLAY_PRODUCT_FEED_LAST_RUN_DURATION, $store);
+	}
+	/**
+	 * Get product feed administrative notice from configuration.
+	 * @param  string|Mage_Core_Model_Store $store
+	 * @return array
+	 */
+	public function getFeedAdminNotice($store=null)
+	{
+		return Mage::getStoreConfig(self::EEMS_DISPLAY_PRODUCT_FEED_LAST_ADMIN_NOTICE, $store);
 	}
 }
