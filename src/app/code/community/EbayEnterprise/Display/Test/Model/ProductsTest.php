@@ -114,49 +114,49 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 		);
 	}
 
-    /**
-     * @return array
-     */
-    public function getDataRowProvider()
-    {
-        return array(
-            array(
-                array(
-                    'sku' => 'ace000',
-                    'name' => 'Aviator Sunglasses',
-                    'short_description' => 'A timeless accessory staple, the unmistakable teardrop lenses of our Aviator sunglasses appeal to everyone from suits to rock stars to citizens of the world.',
-                    'price' => 295.00,
-                    'special_price' => 249.99,
-                    'image' => 'http://localhost/a/resized/image.jpg',
-                    'url_key' => 'http://localhost/path/to/the/product.html',
-                    'available_inventory' => 10000
-                ),
-                array(
-                    'ace000',
-                    'Aviator Sunglasses',
-                    'A timeless accessory staple, the unmistakable teardrop lenses of our Aviator sunglasses appeal to everyone from suits to rock stars to citizens of the world.',
-                    295.00,
-                    249.99,
-                    'http://localhost/a/resized/image.jpg',
-                    'http://localhost/path/to/the/product.html',
-                    10000
-                )
-            ),
-            array(
-                array(
-                    'sku' => 'ace000',
-                    'name' => 'Aviator Sunglasses',
-                    'short_description' => 'A timeless accessory staple, the unmistakable teardrop lenses of our Aviator sunglasses appeal to everyone from suits to rock stars to citizens of the world.',
-                    'price' => 295.00,
-                    'special_price' => 249.99,
-                    'image' => null,
-                    'url_key' => 'http://localhost/path/to/the/product.html',
-                    'available_inventory' => 10000
-                ),
-                null
-            )
-        );
-    }
+	/**
+	 * @return array
+	 */
+	public function getDataRowProvider()
+	{
+		return array(
+			array(
+				array(
+					'sku' => 'ace000',
+					'name' => 'Aviator Sunglasses',
+					'short_description' => 'A timeless accessory staple, the unmistakable teardrop lenses of our Aviator sunglasses appeal to everyone from suits to rock stars to citizens of the world.',
+					'price' => 295.00,
+					'special_price' => 249.99,
+					'image' => 'http://localhost/a/resized/image.jpg',
+					'url_key' => 'http://localhost/path/to/the/product.html',
+					'available_inventory' => 10000
+				),
+				array(
+					'ace000',
+					'Aviator Sunglasses',
+					'A timeless accessory staple, the unmistakable teardrop lenses of our Aviator sunglasses appeal to everyone from suits to rock stars to citizens of the world.',
+					295.00,
+					249.99,
+					'http://localhost/a/resized/image.jpg',
+					'http://localhost/path/to/the/product.html',
+					10000
+				)
+			),
+			array(
+				array(
+					'sku' => 'ace000',
+					'name' => 'Aviator Sunglasses',
+					'short_description' => 'A timeless accessory staple, the unmistakable teardrop lenses of our Aviator sunglasses appeal to everyone from suits to rock stars to citizens of the world.',
+					'price' => 295.00,
+					'special_price' => 249.99,
+					'image' => null,
+					'url_key' => 'http://localhost/path/to/the/product.html',
+					'available_inventory' => 10000
+				),
+				array()
+			)
+		);
+	}
 
 	/**
 	 * Test that the method EbayEnterprise_Display_Model_Products::_getResizedImage
@@ -247,39 +247,39 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 		$this->assertSame($collection, EcomDev_Utils_Reflection::invokeRestrictedMethod($this->_products, '_buildProductCollection', array($storeId)));
 	}
 
-    /**
-     * @param array $attributes array of attributes to initialize the catalog/product model
-     * @param array $expectedReturn
-     * @dataProvider getDataRowProvider
-     */
-    public function testGetDataRow(array $attributes, $expectedReturn)
-    {
-        $product = $this->getModelMock(
-            'catalog/product',
-            array('getProductUrl'),
-            false,
-            array($attributes)
-        );
-        $product->expects($this->any())
-            ->method('getProductUrl')
-            ->will($this->returnValue($attributes['url_key']));
-
-        $products = $this->getModelMock('eems_display/products', array('_getValidSpecialPrice','_getResizedImage'));
-        $products->expects($this->any())
-            ->method('_getValidSpecialPrice')
-            ->will($this->returnValue($attributes['special_price']));
-        $products->expects($this->any())
-            ->method('_getResizedImage')
-            ->will($this->returnValue($attributes['image']));
-        $this->replaceByMock('model', 'eems_display/products', $products);
-
-        $this->assertSame(
-            $expectedReturn,
-            EcomDev_Utils_Reflection::invokeRestrictedMethod(
-                $products,
-                '_getDataRow',
-                array($product, 1)
-            )
-        );
-    }
+	/**
+	 * @param array $attributes array of attributes to initialize the catalog/product model
+	 * @param array $expectedReturn
+	 * @dataProvider getDataRowProvider
+	 */
+	public function testGetDataRow(array $attributes, $expectedReturn)
+	{
+		$product = $this->getModelMock(
+			'catalog/product',
+			array('getProductUrl'),
+			false,
+			array($attributes)
+		);
+		$product->expects($this->any())
+			->method('getProductUrl')
+			->will($this->returnValue($attributes['url_key']));
+	
+		$products = $this->getModelMock('eems_display/products', array('_getValidSpecialPrice','_getResizedImage'));
+		$products->expects($this->any())
+			->method('_getValidSpecialPrice')
+			->will($this->returnValue($attributes['special_price']));
+		$products->expects($this->any())
+			->method('_getResizedImage')
+			->will($this->returnValue($attributes['image']));
+		$this->replaceByMock('model', 'eems_display/products', $products);
+	
+		$this->assertSame(
+			$expectedReturn,
+			EcomDev_Utils_Reflection::invokeRestrictedMethod(
+				$products,
+				'_getDataRow',
+				array($product, 1)
+			)
+		);
+	}
 }

@@ -25,7 +25,7 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	public function getProductFeedUrl($storeId)
 	{
 		return Mage::app()->getStore($storeId)->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK) .
-			Mage::helper('eems_display/config')->getProductFeedFrontName() . self::EEMS_DISPLAY_PRODUCT_FEED_ROUTE . $storeId;
+		Mage::helper('eems_display/config')->getProductFeedFrontName() . self::EEMS_DISPLAY_PRODUCT_FEED_ROUTE . $storeId;
 	}
 	/**
 	 * Find the closest default store id for the current admin scope.
@@ -87,19 +87,31 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 		return str_replace("'", "", Mage::getSingleton('core/resource')->getConnection('default_write')->quote($value));
 	}
 
-    /**
-     * @param string $url
-     * @return string absolute path to the file on the server
-     */
-    public function getLocalPathFromUrl($url)
-    {
-        $info = parse_url($url);
-        if (!$info || empty($info['host'])) {
-            return $url;
-        }
+	/**
+	 * @param string $url
+	 * @return string absolute path to the file on the server
+	 */
+	public function getLocalPathFromUrl($url)
+	{
+		$info = parse_url($url);
+		if (!$info || empty($info['host'])) {
+			return $url;
+		}
+	
+		return Mage::getBaseDir() . $info['path'];
+	}
 
-        return Mage::getBaseDir() . $info['path'];;
-    }
+	/**
+	 * @param string $url
+	 * @return bool
+	 */
+	public function isLocalUrl($url)
+	{
+		$info = parse_url($url);
+		$magento = parse_url(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB));
+
+		return ($info['host'] === $magento['host']);
+	}
 
 	/**
 	 * @param string $filename file name or url for the image file
@@ -109,15 +121,21 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function isValidImage($filename, $width = 0, $height = 0)
 	{
-        if (filter_var($filename, FILTER_VALIDATE_URL)) {
-            $filename = $this->getLocalPathFromUrl($filename);
-        }
+		if (filter_var($filename, FILTER_VALIDATE_URL)) {
+			// it can be expensive to check a remote file so
+			// just return and assume it is valid
+			if (!$this->isLocalUrl($filename)) {
+				return true;
+			}
 
-        if (!file_exists($filename) || is_dir($filename)) {
-            return false;
-        }
+			$filename = $this->getLocalPathFromUrl($filename);
+		}
 
-        $imageInfo = @getimagesize($filename);
+		if (!is_file($filename)) {
+			return false;
+		}
+
+		$imageInfo = @getimagesize($filename);
 
 		// if $width or $height === 0 then just validate the file or url is an image
 		if (!($width && $height) && $imageInfo) {
