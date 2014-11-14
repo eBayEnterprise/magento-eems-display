@@ -21,7 +21,7 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	/**
 	 * @var string, hold the full path to the product image.
 	 */
-	protected $_imageName;
+	protected $_fixtureDir;
 
 	/**
 	 * Setting update product image
@@ -32,57 +32,9 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	public function setUp()
 	{
 		parent::setUp();
-		$baseImage = 'test-product-img.jpg';
-		$this->_imageName = Mage::getBaseDir('media') .
-			DIRECTORY_SEPARATOR . 'catalog' .
-			DIRECTORY_SEPARATOR . 'product' .
-			DIRECTORY_SEPARATOR . static::IMAGE_RELATIVE_PATH;
-		$cacheImage = Mage::getBaseDir('media') .
-			DIRECTORY_SEPARATOR . 'catalog' .
-			DIRECTORY_SEPARATOR . 'product' .
-			DIRECTORY_SEPARATOR . 'resize' .
-			DIRECTORY_SEPARATOR . $baseImage;
-		$fixtureImage = __DIR__ .
+		$this->_fixtureDir = __DIR__ .
 			DIRECTORY_SEPARATOR . 'DataTest' .
-			DIRECTORY_SEPARATOR . 'fixtures' .
-			DIRECTORY_SEPARATOR . $baseImage;
-
-		// @see Varien_Image_Adapter_Gd2::_isMemoryLimitReached
-		// There's a bug in Varien_Image_Adapter_Gd2::open that causes
-		// an exception to be thrown when the PHP built in method
-		// ini_get('memory_limit') return -1, which imply no limit.
-		// I'm guessing that the right environment setting are not set when
-		// running phpunit with EcomDev.
-		if (ini_get('memory_limit') <= 0) {
-			ini_set('memory_limit', '512M');
-		}
-
-		$productMediaDir = str_replace($baseImage, '', $this->_imageName);
-		@mkdir($productMediaDir, 0777, true);
-
-		// if the file already exist remove it.
-		@unlink($this->_imageName);
-
-		// Copy the image file in our fixture directory into
-		// Magento product media directory.
-		@copy($fixtureImage, $this->_imageName);
-
-		$image = new Varien_Image($this->_imageName);
-		$image->constrainOnly(true);
-		$image->keepAspectRatio(false);
-		$image->keepFrame(false);
-		$image->keepTransparency(true);
-		$image->resize(100, 100);
-		$image->save($cacheImage);
-	}
-
-	/**
-	 * remove the image file
-	 * @return void
-	 */
-	public function tearDown()
-	{
-		@unlink($this->_imageName);
+			DIRECTORY_SEPARATOR . 'fixtures';
 	}
 
 	/**
@@ -109,10 +61,41 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	 */
 	public function isValidImageProvider()
 	{
+        $fixtureDir = __DIR__ .
+            DIRECTORY_SEPARATOR . 'DataTest' .
+            DIRECTORY_SEPARATOR . 'fixtures';
+
+        $mageDir = Mage::getBaseDir();
+        $relDir = str_replace($mageDir, '', $fixtureDir);
+        if (strpos($relDir, '/', 0) === 0) {
+            $relDir = substr($relDir, 1);
+        }
+
 		return array(
-			array('no-file.jpg', 0, 0, false)
+            array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 0, 0, true),
+            array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 150, 150, false),
+            array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
+            array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 0, 0, false),
+            array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 150, 150, false),
+			array('no-file.jpg', 0, 0, false),
+            array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
+            array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
+            array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR, 150, 150, false)
 		);
 	}
+
+    /**
+     * @return array
+     */
+    public function getLocalPathFromUrlProvider()
+    {
+        $mageDir = Mage::getBaseDir();
+
+        return array(
+            array('http://localhost/this/is/a/file.jpg', $mageDir.'/this/is/a/file.jpg'),
+            array('/localhost/this/is/a/file.jpg', '/localhost/this/is/a/file.jpg')
+        );
+    }
 
 	/**
 	 */
@@ -170,8 +153,13 @@ accordingly
 		$this->assertEquals($expectedReturn, Mage::helper('eems_display')->isValidImage($filename, $width, $height));
 	}
 
-	public function testIsValidImageDoesntCareAboutSize()
-	{
-		$this->assertTrue(Mage::helper('eems_display')->isValidImage($this->_imageName, 0, 0));
-	}
+    /**
+     * @param string $url
+     * @param string $expectedReturn
+     * @dataProvider getLocalPathFromUrlProvider
+     */
+    public function testGetLocalPathFromUrl($url, $expectedReturn)
+    {
+        $this->assertSame($expectedReturn, Mage::helper('eems_display')->getLocalPathFromUrl($url));
+    }
 }
