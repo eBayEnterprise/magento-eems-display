@@ -31,11 +31,12 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 			),
 			array(
 				"<body>\n\t<div class=\"product\">\n\t\t<p>This is a really cool&reg;®, neat product. Here are some of its neat features: <ul><li>First (première) feature </li><li>Next feature</li><li>日本</li></p>\n",
-				$expectedReturn
+				'This is a really cool®®, neat product. Here are some of its neat features: First (première) feature Next feature日本'
 			),
 			array(
 				'Weiß, Goldmann, Göbel, Weiss, Göthe, Goethe und Götz',
-				'Weiss, Goldmann, Gobel, Weiss, Gothe, Goethe und Gotz'
+				'Weiß, Goldmann, Göbel, Weiss, Göthe, Goethe und Götz'
+				//'Weiss, Goldmann, Gobel, Weiss, Gothe, Goethe und Gotz'
 			)
 		);
 	}
