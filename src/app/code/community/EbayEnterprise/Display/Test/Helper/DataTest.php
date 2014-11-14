@@ -72,9 +72,7 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	
 		$mageDir = Mage::getBaseDir();
 		$relDir = str_replace($mageDir, '', $fixtureDir);
-		if (strpos($relDir, '/', 0) === 0) {
-			$relDir = substr($relDir, 1);
-		}
+		$relDir = ltrim($relDir, '/');
 	
 		return array(
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 0, 0, true),
