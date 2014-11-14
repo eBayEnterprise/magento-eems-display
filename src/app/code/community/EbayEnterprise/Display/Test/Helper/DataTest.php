@@ -66,41 +66,54 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	 */
 	public function isValidImageProvider()
 	{
-        $fixtureDir = __DIR__ .
-            DIRECTORY_SEPARATOR . 'DataTest' .
-            DIRECTORY_SEPARATOR . 'fixtures';
-
-        $mageDir = Mage::getBaseDir();
-        $relDir = str_replace($mageDir, '', $fixtureDir);
-        if (strpos($relDir, '/', 0) === 0) {
-            $relDir = substr($relDir, 1);
-        }
-
+		$fixtureDir = __DIR__ .
+			DIRECTORY_SEPARATOR . 'DataTest' .
+			DIRECTORY_SEPARATOR . 'fixtures';
+	
+		$mageDir = Mage::getBaseDir();
+		$relDir = str_replace($mageDir, '', $fixtureDir);
+		if (strpos($relDir, '/', 0) === 0) {
+			$relDir = substr($relDir, 1);
+		}
+	
 		return array(
-            array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 0, 0, true),
-            array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 150, 150, false),
-            array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
-            array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 0, 0, false),
-            array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 150, 150, false),
+			array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 0, 0, true),
+			array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 150, 150, false),
+			array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
+			array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 0, 0, false),
+			array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 150, 150, false),
 			array('no-file.jpg', 0, 0, false),
-            array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
-            array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
-            array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR, 150, 150, false)
+			array('http://localhost:8080/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
+			array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
+			array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR, 150, 150, false),
+			array('http://some.other.host/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
 		);
 	}
 
-    /**
-     * @return array
-     */
-    public function getLocalPathFromUrlProvider()
-    {
-        $mageDir = Mage::getBaseDir();
+	/**
+	 * @return array
+	 */
+	public function getLocalPathFromUrlProvider()
+	{
+		$mageDir = Mage::getBaseDir();
+	
+		return array(
+			array('http://localhost/this/is/a/file.jpg', $mageDir.'/this/is/a/file.jpg'),
+			array('/localhost/this/is/a/file.jpg', '/localhost/this/is/a/file.jpg')
+		);
+	}
 
-        return array(
-            array('http://localhost/this/is/a/file.jpg', $mageDir.'/this/is/a/file.jpg'),
-            array('/localhost/this/is/a/file.jpg', '/localhost/this/is/a/file.jpg')
-        );
-    }
+	/**
+	 * @return array
+	 */
+	public function isLocalUrlProvider()
+	{
+		$mageDir = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+		return array(
+			array($mageDir.'index.php', true),
+			array('http://some.other.host/index.php', false)
+		);
+	}
 
 	/**
 	 */
@@ -158,13 +171,23 @@ accordingly
 		$this->assertEquals($expectedReturn, Mage::helper('eems_display')->isValidImage($filename, $width, $height));
 	}
 
-    /**
-     * @param string $url
-     * @param string $expectedReturn
-     * @dataProvider getLocalPathFromUrlProvider
-     */
-    public function testGetLocalPathFromUrl($url, $expectedReturn)
-    {
-        $this->assertSame($expectedReturn, Mage::helper('eems_display')->getLocalPathFromUrl($url));
-    }
+	/**
+	 * @param string $url
+	 * @param string $expectedReturn
+	 * @dataProvider getLocalPathFromUrlProvider
+	 */
+	public function testGetLocalPathFromUrl($url, $expectedReturn)
+	{
+		$this->assertSame($expectedReturn, Mage::helper('eems_display')->getLocalPathFromUrl($url));
+	}
+
+	/**
+	 * @param string $url
+	 * @param $expectedResult
+	 * @dataProvider isLocalUrlProvider
+	 */
+	public function testIsLocalUrl($url, $expectedResult)
+	{
+		$this->assertSame($expectedResult, Mage::helper('eems_display')->isLocalUrl($url));
+	}
 }

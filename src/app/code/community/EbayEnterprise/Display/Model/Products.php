@@ -114,18 +114,17 @@ class EbayEnterprise_Display_Model_Products
 			Mage::log("Error sizing Image URL for {$product->getSku()}: {$e->getMessage()}");
 		}
 
-        	// $imageUrl should be valid or an empty string but some customers are reporting invalid URLs in their feed
-        	// so we add one last check to make sure we have a valid URL or return an empty string if we don't
-        	if (!$this->_helper->isValidImage(
-            		$imageUrl,
-            		$this->_config->getFeedImageWidth($storeId),
-            		$this->_config->getFeedImageHeight($storeId)
-        		)
-		) {
-            		$imageUrl = '';
-        	}	
+		// $imageUrl should be valid or an empty string but some customers are reporting invalid URLs in their feed
+		// so we add one last check to make sure we have a valid URL or return an empty string if we don't
+		if (!$this->_helper->isValidImage(
+			$imageUrl,
+			$this->_config->getFeedImageWidth($storeId),
+			$this->_config->getFeedImageHeight($storeId)
+		)) {
+			$imageUrl = '';
+		}
 
-        return $imageUrl;
+		return $imageUrl;
 	}
 
 	/**
@@ -189,10 +188,10 @@ class EbayEnterprise_Display_Model_Products
 		for($page = 1; $page <= $lastPage; $page++) {
 			$products->setCurPage($page);
 			foreach ($products as $product) {
-                $dataRow = $this->_getDataRow($product, $storeId);
-                if ($dataRow) {
-                    $this->_adapter->addNewCsvRow($this->_getDataRow($product, $storeId));
-                }
+				$dataRow = $this->_getDataRow($product, $storeId);
+				if (!empty($dataRow)) {
+					$this->_adapter->addNewCsvRow($this->_getDataRow($product, $storeId));
+				}
 			}
 			$products->clear();
 		}
@@ -203,15 +202,15 @@ class EbayEnterprise_Display_Model_Products
 	 * Return an array of CSV row data.
 	 * @param  Mage_Catalog_Model_Product $product
 	 * @param  int $storeId
-	 * @return array | null returns null if we don't have a va;id image URL
+	 * @return array returns an empty array if the image is not valid
 	 */
 	protected function _getDataRow(Mage_Catalog_Model_Product $product, $storeId)
 	{
-        	// if we don't have a valid image URL return null so we can skip this product in the feed
-        	$resized = $this->_getResizedImage($product, $storeId);
-        	if (empty($resized)) {
-            		return null;
-        	}
+        // if we don't have an image URL return an empty array so we can skip this product in the feed
+        $resized = $this->_getResizedImage($product, $storeId);
+        if (empty($resized)) {
+            return array();
+        }
 
 		return array(
 			$product->getSku(),
