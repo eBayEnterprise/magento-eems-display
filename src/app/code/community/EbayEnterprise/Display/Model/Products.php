@@ -114,15 +114,16 @@ class EbayEnterprise_Display_Model_Products
 			Mage::log("Error sizing Image URL for {$product->getSku()}: {$e->getMessage()}");
 		}
 
-        // $imageUrl should be valid or an empty string but some customers are reporting invalid URLs in their feed
-        // so we add one last check to make sure we have a valid URL or return an empty string if we don't
-        if (!$this->_helper->isValidImage(
-            $imageUrl,
-            $this->_config->getFeedImageWidth($storeId),
-            $this->_config->getFeedImageHeight($storeId)
-        )) {
-            $imageUrl = '';
-        }
+        	// $imageUrl should be valid or an empty string but some customers are reporting invalid URLs in their feed
+        	// so we add one last check to make sure we have a valid URL or return an empty string if we don't
+        	if (!$this->_helper->isValidImage(
+            		$imageUrl,
+            		$this->_config->getFeedImageWidth($storeId),
+            		$this->_config->getFeedImageHeight($storeId)
+        		)
+		) {
+            		$imageUrl = '';
+        	}	
 
         return $imageUrl;
 	}
@@ -206,11 +207,11 @@ class EbayEnterprise_Display_Model_Products
 	 */
 	protected function _getDataRow(Mage_Catalog_Model_Product $product, $storeId)
 	{
-        // if we don't have a valid image URL return null so we can skip this product in the feed
-        $resized = $this->_getResizedImage($product, $storeId);
-        if (empty($resized)) {
-            return null;
-        }
+        	// if we don't have a valid image URL return null so we can skip this product in the feed
+        	$resized = $this->_getResizedImage($product, $storeId);
+        	if (empty($resized)) {
+            		return null;
+        	}
 
 		return array(
 			$product->getSku(),
