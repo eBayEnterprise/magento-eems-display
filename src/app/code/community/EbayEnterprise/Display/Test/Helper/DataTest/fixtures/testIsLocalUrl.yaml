@@ -1,0 +1,3 @@
+config:
+  default/web/unsecure/base_url: http://localhost/
+  default/web/secure/base_url: http://localhost/

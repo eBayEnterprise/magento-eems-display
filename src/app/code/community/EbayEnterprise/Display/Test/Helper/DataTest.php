@@ -108,7 +108,8 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	{
 		$mageDir = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
 		return array(
-			array($mageDir.'index.php', true),
+			//array($mageDir.'index.php', true),
+			array('http://localhost/index.php', true),
 			array('http://some.other.host/index.php', false)
 		);
 	}
@@ -183,6 +184,7 @@ accordingly
 	 * @param string $url
 	 * @param $expectedResult
 	 * @dataProvider isLocalUrlProvider
+	 * @loadFixture testIsLocalUrl.yaml
 	 */
 	public function testIsLocalUrl($url, $expectedResult)
 	{
