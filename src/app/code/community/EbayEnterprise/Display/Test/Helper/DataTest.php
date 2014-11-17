@@ -84,16 +84,4 @@ accordingly
 	{
 		$this->assertSame($expectedReturn, Mage::helper('eems_display')->cleanStringForFeed($content));
 	}
-
-	/**
-	 * Test that EbayEnterprise_display_Helper_Data::stripNonAsciiCharacters
-	 * properly removes any character above code 0x7e
-	 */
-	public function testStripNonAsciiChars()
-	{
-		$this->assertSame(
-			"This string contains some non-ascii characters here, , and here, ",
-			Mage::helper('eems_display')->stripNonAsciiChars("This string contains some non-ascii characters here, ®, and here, 日本")
-		);
-	}
 }

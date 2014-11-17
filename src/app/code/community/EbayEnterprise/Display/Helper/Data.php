@@ -68,18 +68,6 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	}
 
 	/**
-	 * Strip all non-ascii characters from the string
-	 * Removes all characters not in the range 0x20 - 0x7e
-	 *
-	 * @param string $content
-	 * @return string
-	 */
-	public function stripNonAsciiChars($content)
-	{
-		return preg_replace('/[^(\x20-\x7E)]*/','', $content);
-	}
-
-	/**
 	 * Clean all unwanted characters from a string in preparation for
 	 * inclusion in the feed
 	 *
