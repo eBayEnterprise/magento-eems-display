@@ -106,9 +106,7 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	 */
 	public function isLocalUrlProvider()
 	{
-		$mageDir = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
 		return array(
-			//array($mageDir.'index.php', true),
 			array('http://localhost/index.php', true),
 			array('http://some.other.host/index.php', false)
 		);
@@ -134,7 +132,7 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 0, 0, false),
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 150, 150, false),
 			array('no-file.jpg', 0, 0, false),
-			array('http://localhost:8080/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
+			array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
 			array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
 			array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR, 150, 150, false),
 			array('http://some.other.host/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
