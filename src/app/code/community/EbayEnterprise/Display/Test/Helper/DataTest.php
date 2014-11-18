@@ -182,7 +182,6 @@ accordingly
 	 * @param string $url
 	 * @param $expectedResult
 	 * @dataProvider isLocalUrlProvider
-	 * @loadFixture testIsLocalUrl.yaml
 	 */
 	public function testIsLocalUrl($url, $expectedResult)
 	{
