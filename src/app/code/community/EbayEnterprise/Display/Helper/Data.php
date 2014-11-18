@@ -108,8 +108,13 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 		if (!$info || empty($info['host'])) {
 			return $url;
 		}
-	
-		return Mage::getBaseDir() . $info['path'];
+
+		$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+		if (strpos($url, $baseUrl) !== 0)
+			return $url;
+
+		$path = substr($url, strlen($baseUrl));
+		return Mage::getBaseDir() . DIRECTORY_SEPARATOR . $path;
 	}
 
 	/**

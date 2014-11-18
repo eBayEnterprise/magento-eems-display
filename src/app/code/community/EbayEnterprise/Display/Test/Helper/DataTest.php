@@ -64,40 +64,41 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	/**
 	 * @return array
 	 */
-	public function isValidImageProvider()
+	public function isValidImageLocalFileProvider()
 	{
 		$fixtureDir = __DIR__ .
 			DIRECTORY_SEPARATOR . 'DataTest' .
 			DIRECTORY_SEPARATOR . 'fixtures';
-	
-		$mageDir = Mage::getBaseDir();
-		$relDir = str_replace($mageDir, '', $fixtureDir);
-		$relDir = ltrim($relDir, '/');
-	
+
+		$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+
 		return array(
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 0, 0, true),
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img.jpg', 150, 150, false),
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 0, 0, false),
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 150, 150, false),
-			array('no-file.jpg', 0, 0, false),
-			array('http://example.com/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
-			array('http://example.com/'. $relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
-			array('http://example.com/'. $relDir . DIRECTORY_SEPARATOR, 150, 150, false),
-			array('http://some.other.host/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
+			array('no-file.jpg', 0, 0, false)
 		);
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getLocalPathFromUrlProvider()
+	public function isValidImageLocalUrlProvider()
 	{
+		$fixtureDir = __DIR__ .
+			DIRECTORY_SEPARATOR . 'DataTest' .
+			DIRECTORY_SEPARATOR . 'fixtures';
+
 		$mageDir = Mage::getBaseDir();
+		$relDir = str_replace($mageDir, '', $fixtureDir);
+		$relDir = ltrim($relDir, '/');
 
 		return array(
-			array('http://example.com/this/is/a/file.jpg', $mageDir.'/this/is/a/file.jpg'),
-			array('/localhost/this/is/a/file.jpg', '/localhost/this/is/a/file.jpg')
+			array($relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
+			array($relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
+			array($relDir . DIRECTORY_SEPARATOR, 150, 150, false)
 		);
 	}
 
@@ -106,8 +107,9 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	 */
 	public function isLocalUrlProvider()
 	{
+		$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
 		return array(
-			array('http://example.com/index.php', true),
+			array("$baseUrl/index.php", true),
 			array('http://some.other.host/index.php', false)
 		);
 	}
@@ -161,30 +163,83 @@ accordingly
 	 * @param int $width
 	 * @param int $height
 	 * @param bool $expectedReturn
-	 * @dataProvider isValidImageProvider
+	 * @dataProvider isValidImageLocalFileProvider
 	 */
-	public function testIsValidImage($filename, $width, $height, $expectedReturn)
+	public function testIsValidImageWithLocalFiles($filename, $width, $height, $expectedReturn)
 	{
 		$this->assertEquals($expectedReturn, Mage::helper('eems_display')->isValidImage($filename, $width, $height));
 	}
 
 	/**
-	 * @param string $url
-	 * @param string $expectedReturn
-	 * @dataProvider getLocalPathFromUrlProvider
+	 * @param string $filename file name or url
+	 * @param int $width
+	 * @param int $height
+	 * @param bool $expectedReturn
+	 * @dataProvider isValidImageLocalUrlProvider
 	 */
-	public function testGetLocalPathFromUrl($url, $expectedReturn)
+	public function testIsValidImageWithLocalUrl($filename, $width, $height, $expectedReturn)
 	{
-		$this->assertSame($expectedReturn, Mage::helper('eems_display')->getLocalPathFromUrl($url));
+		$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+		$this->assertEquals(
+			$expectedReturn,
+			Mage::helper('eems_display')->isValidImage("{$baseUrl}{$filename}", $width, $height)
+		);
 	}
 
 	/**
-	 * @param string $url
-	 * @param $expectedResult
-	 * @dataProvider isLocalUrlProvider
+	 *
 	 */
-	public function testIsLocalUrl($url, $expectedResult)
+	public function testIsValidImageWithRemoteFile()
 	{
-		$this->assertSame($expectedResult, Mage::helper('eems_display')->isLocalUrl($url));
+		$this->assertTrue(
+			Mage::helper('eems_display')
+				->isValidImage(
+					'http://some.other.host/test-product-img-150-150.jpg',
+					150,
+					150
+				)
+		);
+	}
+
+	/**
+	 *
+	 */
+	public function testGetLocalPathFromUrlWithLocalFile()
+	{
+		$this->assertSame(
+			'/localhost/this/is/a/file.jpg',
+			Mage::helper('eems_display')->getLocalPathFromUrl('/localhost/this/is/a/file.jpg')
+		);
+	}
+
+	/**
+	 *
+	 */
+	public function testGetLocalPathFromUrlWithUrl()
+	{
+		$mageDir = Mage::getBaseDir();
+		$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+
+		$this->assertSame(
+			"$mageDir/this/is/a/file.jpg",
+			Mage::helper('eems_display')->getLocalPathFromUrl("{$baseUrl}this/is/a/file.jpg")
+		);
+	}
+
+	/**
+	 *
+	 */
+	public function testIsLocalUrlWithLocalUrl()
+	{
+		$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+		$this->assertTrue(Mage::helper('eems_display')->isLocalUrl("$baseUrl/index.php"));
+	}
+
+	/**
+	 *
+	 */
+	public function testIsLocalUrlWithNonLocalUrl()
+	{
+		$this->assertFalse(Mage::helper('eems_display')->isLocalUrl('http://some.other.host/index.php'));
 	}
 }
