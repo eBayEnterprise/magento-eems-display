@@ -81,9 +81,9 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 0, 0, false),
 			array($fixtureDir . DIRECTORY_SEPARATOR . 'not-an-image.jpg', 150, 150, false),
 			array('no-file.jpg', 0, 0, false),
-			array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
-			array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
-			array('http://localhost/'. $relDir . DIRECTORY_SEPARATOR, 150, 150, false),
+			array('http://example.com/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
+			array('http://example.com/'. $relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
+			array('http://example.com/'. $relDir . DIRECTORY_SEPARATOR, 150, 150, false),
 			array('http://some.other.host/'. $relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
 		);
 	}
