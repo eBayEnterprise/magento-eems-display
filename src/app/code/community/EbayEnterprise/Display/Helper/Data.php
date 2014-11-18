@@ -120,7 +120,7 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		$info = parse_url($url);
 		$magento = parse_url(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB));
-
+		var_dump($magento);
 		return ($info['host'] === $magento['host']);
 	}
 
