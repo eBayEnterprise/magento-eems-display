@@ -96,7 +96,7 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 		$mageDir = Mage::getBaseDir();
 
 		return array(
-			array('http://localhost/this/is/a/file.jpg', $mageDir.'/this/is/a/file.jpg'),
+			array('http://example.com/this/is/a/file.jpg', $mageDir.'/this/is/a/file.jpg'),
 			array('/localhost/this/is/a/file.jpg', '/localhost/this/is/a/file.jpg')
 		);
 	}
@@ -107,7 +107,7 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	public function isLocalUrlProvider()
 	{
 		return array(
-			array('http://localhost/index.php', true),
+			array('http://example.com/index.php', true),
 			array('http://some.other.host/index.php', false)
 		);
 	}
