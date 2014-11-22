@@ -26,67 +26,6 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 
 	/** @var EbayEnterprise_Display_Model_Products $_products */
 	protected $_products;
-	/**
-	 * Setting update product image
-	 * Move the image in the fixture under magento media
-	 * directory and save a cache version of it.
-	 * @return void
-	 */
-	public function setUp()
-	{
-		parent::setUp();
-		$this->_products = Mage::getModel('eems_display/products');
-		$baseImage = 'test-product-img.jpg';
-		$this->_imageName = Mage::getBaseDir('media') .
-			DIRECTORY_SEPARATOR . 'catalog' .
-			DIRECTORY_SEPARATOR . 'product' .
-			DIRECTORY_SEPARATOR . static::IMAGE_RELATIVE_PATH;
-		$cacheImage = Mage::getBaseDir('media') .
-			DIRECTORY_SEPARATOR . 'catalog' .
-			DIRECTORY_SEPARATOR . 'product' .
-			DIRECTORY_SEPARATOR . 'resize' .
-			DIRECTORY_SEPARATOR . $baseImage;
-		$fixtureImage = __DIR__ .
-			DIRECTORY_SEPARATOR . 'ProductsTest' .
-			DIRECTORY_SEPARATOR . 'fixtures' .
-			DIRECTORY_SEPARATOR . $baseImage;
-
-		// @see Varien_Image_Adapter_Gd2::_isMemoryLimitReached
-		// There's a bug in Varien_Image_Adapter_Gd2::open that causes
-		// an exception to be thrown when the PHP built in method
-		// ini_get('memory_limit') return -1, which imply no limit.
-		// I'm guessing that the right environment setting are not set when
-		// running phpunit with EcomDev.
-		if (ini_get('memory_limit') <= 0) {
-			ini_set('memory_limit', '512M');
-		}
-
-		$productMediaDir = str_replace($baseImage, '', $this->_imageName);
-		@mkdir($productMediaDir, 0777, true);
-
-		// if the file already exist remove it.
-		@unlink($this->_imageName);
-
-		// Copy the image file in our fixture directory into
-		// Magento product media directory.
-		@copy($fixtureImage, $this->_imageName);
-
-		$image = new Varien_Image($this->_imageName);
-		$image->constrainOnly(true);
-		$image->keepAspectRatio(false);
-		$image->keepFrame(false);
-		$image->keepTransparency(true);
-		$image->resize(100, 100);
-		$image->save($cacheImage);
-	}
-	/**
-	 * remove the image file
-	 * @return void
-	 */
-	public function tearDown()
-	{
-		@unlink($this->_imageName);
-	}
 
 	/**
 	 * @return array
@@ -159,6 +98,65 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	}
 
 	/**
+	 * Move the image in the fixture under magento media
+	 * directory and save a cache version of it.
+	 *
+	 * @param string $image
+	 * @return string
+	 */
+	protected function injectImage($image)
+	{
+		if (empty($image)) {
+			return '';
+		}
+
+		$baseImage = basename($image);
+		$imageName = Mage::getBaseDir('media') .
+			DS . 'catalog' .
+			DS . 'product' .
+			DS . $image;
+		$cacheImage = Mage::getBaseDir('media') .
+			DS . 'catalog' .
+			DS . 'product' .
+			DS . 'resize' .
+			DS . $baseImage;
+		$fixtureImage = __DIR__ .
+			DS . 'ProductsTest' .
+			DS . 'fixtures' .
+			DS . $baseImage;
+
+		// @see Varien_Image_Adapter_Gd2::_isMemoryLimitReached
+		// There's a bug in Varien_Image_Adapter_Gd2::open that causes
+		// an exception to be thrown when the PHP built in method
+		// ini_get('memory_limit') return -1, which imply no limit.
+		// I'm guessing that the right environment setting are not set when
+		// running phpunit with EcomDev.
+		if (ini_get('memory_limit') <= 0) {
+			ini_set('memory_limit', '512M');
+		}
+
+		$productMediaDir = str_replace($baseImage, '', $this->_imageName);
+		@mkdir($productMediaDir, 0777, true);
+
+		// if the file already exist remove it.
+		@unlink($imageName);
+
+		// Copy the image file in our fixture directory into
+		// Magento product media directory.
+		@copy($fixtureImage, $imageName);
+
+		$image = new Varien_Image($imageName);
+		$image->constrainOnly(true);
+		$image->keepAspectRatio(false);
+		$image->keepFrame(false);
+		$image->keepTransparency(true);
+		$image->resize(100, 100);
+		$image->save($cacheImage);
+
+		return $imageName;
+	}
+
+	/**
 	 * Test that the method EbayEnterprise_Display_Model_Products::_getResizedImage
 	 * when passed in a product that has a valid image data loaded to it will
 	 * return the proper location of the image otherwise it will return a placeholder image.
@@ -169,9 +167,51 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	{
 		$product = Mage::getModel('catalog/product', array('entity_id' => $entityId, 'image' => $image));
 		$feed = Mage::getModel('eems_display/products');
-		$this->assertStringEndsWith($expected, EcomDev_Utils_Reflection::invokeRestrictedMethod(
-			$feed, '_getResizedImage', array($product, Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID)
-		));
+
+		$imageName = $this->injectImage($image);
+		$resized = EcomDev_Utils_Reflection::invokeRestrictedMethod(
+			$feed,
+			'_getResizedImage',
+			array(
+				$product,
+				Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID
+			)
+		);
+		@unlink($imageName);
+
+		$this->assertStringEndsWith($expected, $resized);
+	}
+
+	/**
+	 * @param int $entityId
+	 * @param string $image
+	 * @param array $expectedReturn
+	 * @dataProvider dataProvider
+	 */
+	public function testGetResizedImageImageSize($entityId, $image, array $expectedReturn)
+	{
+		$product = Mage::getModel(
+			'catalog/product',
+			array(
+				'entity_id' => $entityId,
+				'image' => $image
+			)
+		);
+		$feed = Mage::getModel('eems_display/products');
+
+		$imageName = $this->injectImage($image);
+		$resized = EcomDev_Utils_Reflection::invokeRestrictedMethod(
+			$feed,
+			'_getResizedImage',
+			array(
+				$product,
+				Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID
+			)
+		);
+		$info = getimagesize($resized);
+		@unlink($imageName);
+
+		$this->assertSame($expectedReturn, array((string)$info[0], (string)$info[1]));
 	}
 
 	/**
@@ -243,8 +283,9 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 			->with($this->identicalTo($pageSize))
 			->will($this->returnSelf());
 		$this->replaceByMock('resource_model', 'eems_display/product_collection', $collection);
+		$products = Mage::getModel('eems_display/products');
 
-		$this->assertSame($collection, EcomDev_Utils_Reflection::invokeRestrictedMethod($this->_products, '_buildProductCollection', array($storeId)));
+		$this->assertSame($collection, EcomDev_Utils_Reflection::invokeRestrictedMethod($products, '_buildProductCollection', array($storeId)));
 	}
 
 	/**

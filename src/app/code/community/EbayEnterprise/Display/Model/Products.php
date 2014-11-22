@@ -108,6 +108,8 @@ class EbayEnterprise_Display_Model_Products
 			// a string. Its (php) magic '__toString()' method is what actually resizes and saves
 			$imageUrl = (string) Mage::helper('catalog/image')
 				->init($product, 'image')
+				->keepFrame(false)
+				->constrainOnly(true)
 				->keepAspectRatio(
 					$this->_config->getFeedImageKeepAspectRatio($storeId)
 				)
@@ -120,13 +122,9 @@ class EbayEnterprise_Display_Model_Products
 			Mage::log("Error sizing Image URL for {$product->getSku()}: {$e->getMessage()}");
 		}
 
-		// $imageUrl should be valid or an empty string but some customers are reporting invalid URLs in their feed
-		// so we add one last check to make sure we have a valid URL or return an empty string if we don't
-		if (!$this->_helper->isValidImage(
-			$imageUrl,
-			$this->_config->getFeedImageWidth($storeId),
-			$this->_config->getFeedImageHeight($storeId)
-		)) {
+		// $imageUrl should be the URL of a valid image or an empty string but some customers are reporting invalid URLs
+		// in their feed so we add one last check. Make sure we really do have a valid URL or return an empty string if we don't
+		if (!$this->_helper->isValidImage($imageUrl)) {
 			$imageUrl = '';
 		}
 

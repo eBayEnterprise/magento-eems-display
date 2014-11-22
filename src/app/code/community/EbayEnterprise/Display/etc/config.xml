@@ -36,8 +36,8 @@
 					<file_path>eems_display</file_path>
 					<image>
 						<!-- As per spec, 150x150: -->
-						<height>150</height>
-						<width>150</width>
+						<height>315</height>
+						<width>600</width>
 						<!-- 1 = do not distort, 150x150 is a constraint: -->
 						<keep_aspect_ratio>1</keep_aspect_ratio>
 					</image>

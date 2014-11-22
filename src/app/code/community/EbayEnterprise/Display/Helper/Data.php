@@ -161,6 +161,7 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 
 		return ($imageInfo && ($imageInfo[0] === $width) && ($imageInfo[1] === $height));
 	}
+
 	/**
 	 * Return a DateInterval instance between two dates.
 	 * @param  string $startDate
