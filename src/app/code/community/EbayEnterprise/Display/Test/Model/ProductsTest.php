@@ -18,15 +18,6 @@
 class EbayEnterprise_Display_Test_Model_ProductsTest
 	extends EcomDev_PHPUnit_Test_Case
 {
-	const IMAGE_RELATIVE_PATH = 'p/r/test-product-img.jpg';
-	/**
-	 * @var string, hold the full path to the product image.
-	 */
-	protected $_imageName;
-
-	/** @var EbayEnterprise_Display_Model_Products $_products */
-	protected $_products;
-
 	/**
 	 * @return array
 	 */
@@ -135,7 +126,7 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 			ini_set('memory_limit', '512M');
 		}
 
-		$productMediaDir = str_replace($baseImage, '', $this->_imageName);
+		$productMediaDir = str_replace($baseImage, '', $imageName);
 		@mkdir($productMediaDir, 0777, true);
 
 		// if the file already exist remove it.
