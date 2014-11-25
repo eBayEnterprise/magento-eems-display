@@ -223,7 +223,7 @@ class EbayEnterprise_Display_Model_Products
 			$this->_helper->cleanStringForFeed($product->getShortDescription()),
 			$product->getPrice(),
 			$this->_getValidSpecialPrice($product, $storeId),
-			$this->_getResizedImage($product, $storeId),
+			$resized,
 			$product->getProductUrl(),
 			$product->getAvailableInventory(),
 		);
