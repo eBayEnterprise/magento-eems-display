@@ -166,7 +166,7 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	 * @param int $storeId
 	 * @return array
 	 */
-	public function imageSizeForFeed($product, $storeId)
+	public function imageSizeForFeed(Mage_Catalog_Model_Product $product, $storeId)
 	{
 		$config = Mage::helper('eems_display/config');
 
