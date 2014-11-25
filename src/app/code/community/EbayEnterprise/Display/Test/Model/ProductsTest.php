@@ -174,38 +174,6 @@ class EbayEnterprise_Display_Test_Model_ProductsTest
 	}
 
 	/**
-	 * @param int $entityId
-	 * @param string $image
-	 * @param array $expectedReturn
-	 * @dataProvider dataProvider
-	 */
-	public function testGetResizedImageImageSize($entityId, $image, array $expectedReturn)
-	{
-		$product = Mage::getModel(
-			'catalog/product',
-			array(
-				'entity_id' => $entityId,
-				'image' => $image
-			)
-		);
-		$feed = Mage::getModel('eems_display/products');
-
-		$imageName = $this->injectImage($image);
-		$resized = EcomDev_Utils_Reflection::invokeRestrictedMethod(
-			$feed,
-			'_getResizedImage',
-			array(
-				$product,
-				Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID
-			)
-		);
-		$info = getimagesize($resized);
-		@unlink($imageName);
-
-		$this->assertSame($expectedReturn, array((string)$info[0], (string)$info[1]));
-	}
-
-	/**
 	 * @param float | null $specialPrice
 	 * @param string | null $fromDate
 	 * @param string | null $toDate
