@@ -24,6 +24,65 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 	protected $_fixtureDir;
 
 	/**
+	 * Move the image in the fixture under magento media
+	 * directory and save a cache version of it.
+	 *
+	 * @param string $image
+	 * @return string
+	 */
+	protected function injectImage($image)
+	{
+		if (empty($image)) {
+			return '';
+		}
+
+		$baseImage = basename($image);
+		$imageName = Mage::getBaseDir('media') .
+			DS . 'catalog' .
+			DS . 'product' .
+			DS . $image;
+		$cacheImage = Mage::getBaseDir('media') .
+			DS . 'catalog' .
+			DS . 'product' .
+			DS . 'resize' .
+			DS . $baseImage;
+		$fixtureImage = __DIR__ .
+			DS . 'DataTest' .
+			DS . 'fixtures' .
+			DS . $baseImage;
+
+		// @see Varien_Image_Adapter_Gd2::_isMemoryLimitReached
+		// There's a bug in Varien_Image_Adapter_Gd2::open that causes
+		// an exception to be thrown when the PHP built in method
+		// ini_get('memory_limit') return -1, which imply no limit.
+		// I'm guessing that the right environment setting are not set when
+		// running phpunit with EcomDev.
+		if (ini_get('memory_limit') <= 0) {
+			ini_set('memory_limit', '512M');
+		}
+
+		$productMediaDir = str_replace($baseImage, '', $imageName);
+		@mkdir($productMediaDir, 0777, true);
+
+		// if the file already exist remove it.
+		@unlink($imageName);
+
+		// Copy the image file in our fixture directory into
+		// Magento product media directory.
+		@copy($fixtureImage, $imageName);
+
+		$image = new Varien_Image($imageName);
+		$image->constrainOnly(true);
+		$image->keepAspectRatio(false);
+		$image->keepFrame(false);
+		$image->keepTransparency(true);
+		$image->resize(100, 100);
+		$image->save($cacheImage);
+
+		return $imageName;
+	}
+
+	/**
 	 * Setting update product image
 	 * Move the image in the fixture under magento media
 	 * directory and save a cache version of it.
@@ -97,6 +156,19 @@ class EbayEnterprise_Display_Test_Helper_DataTest extends EcomDev_PHPUnit_Test_C
 			array($relDir . DIRECTORY_SEPARATOR . 'test-product-img-150-150.jpg', 150, 150, true),
 			array($relDir . DIRECTORY_SEPARATOR . 'no-file.jpg', 150, 150, false),
 			array($relDir . DIRECTORY_SEPARATOR, 150, 150, false)
+		);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function imageSizeForFeedProvider()
+	{
+		return array(
+			array(1, 'p/r/test-product-img.jpg', array(600, 315)),
+			array(1, 'p/r/test-product-large-img.jpg', array(600, 315)),
+			array(1, 'p/r/test-product-large-wide-img.jpg', array(600, 315)),
+			array(1, 'p/r/test-product-img-150-150.jpg', array(150, 150))
 		);
 	}
 
@@ -197,6 +269,22 @@ accordingly
 					150
 				)
 		);
+	}
+
+	/**
+	 * @param int $entityId
+	 * @param string $image
+	 * @param array $expectedReturn
+	 * @dataProvider imageSizeForFeedProvider
+	 */
+	public function testImageSizeForFeed($entityId, $image, array $expectedReturn)
+	{
+		$product = Mage::getModel('catalog/product', array('entity_id' => $entityId, 'image' => $image));
+		$imageName = $this->injectImage($image);
+		$size = Mage::helper('eems_display')->imageSizeForFeed($product, Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID);
+		@unlink($imageName);
+
+		$this->assertSame($expectedReturn, array($size['width'], $size['height']));
 	}
 
 	/**

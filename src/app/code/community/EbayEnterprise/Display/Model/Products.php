@@ -103,19 +103,20 @@ class EbayEnterprise_Display_Model_Products
 	 */
 	protected function _getResizedImage(Mage_Catalog_Model_Product $product, $storeId)
 	{
+		$size = $this->_helper->imageSizeForFeed($product, $storeId);
+
 		try {
 			// Image implementation doesn't save the resize filed unless it's coerced into
 			// a string. Its (php) magic '__toString()' method is what actually resizes and saves
 			$imageUrl = (string) Mage::helper('catalog/image')
 				->init($product, 'image')
-				->keepFrame(false)
 				->constrainOnly(true)
 				->keepAspectRatio(
 					$this->_config->getFeedImageKeepAspectRatio($storeId)
 				)
 				->resize(
-					$this->_config->getFeedImageWidth($storeId),
-					$this->_config->getFeedImageHeight($storeId)
+					$size['width'],
+					$size['height']
 				);
 		} catch (Exception $e) {
 			$imageUrl = '';
@@ -124,7 +125,7 @@ class EbayEnterprise_Display_Model_Products
 
 		// $imageUrl should be the URL of a valid image or an empty string but some customers are reporting invalid URLs
 		// in their feed so we add one last check. Make sure we really do have a valid URL or return an empty string if we don't
-		if (!$this->_helper->isValidImage($imageUrl)) {
+		if (!$this->_helper->isValidImage($imageUrl, $size['width'], $size['height'])) {
 			$imageUrl = '';
 		}
 

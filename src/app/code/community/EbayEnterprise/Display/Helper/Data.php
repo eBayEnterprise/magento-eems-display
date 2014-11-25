@@ -59,7 +59,6 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	/**
 	 * Strip out Carriage Return (CR) and Line Feed (LF) characters from a string
 	 * @param string $content
-	 * @param string
 	 * @return string
 	 */
 	public function cleanString($content)
@@ -160,6 +159,39 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 
 
 		return ($imageInfo && ($imageInfo[0] === $width) && ($imageInfo[1] === $height));
+	}
+
+	/**
+	 * @param Mage_Catalog_Model_Product $product
+	 * @param int $storeId
+	 * @return array
+	 */
+	public function imageSizeForFeed($product, $storeId)
+	{
+		$config = Mage::helper('eems_display/config');
+
+		$frameWidth = $config->getFeedImageWidth($storeId);
+		$frameHeight = $config->getFeedImageHeight($storeId);
+
+		$image = Mage::helper('catalog/image');
+		$image->init($product, 'image');
+
+		$imageWidth = $image->getOriginalWidth();
+		$imageHeight = $image->getOriginalHeight();
+
+		$dstWidth  = $frameWidth;
+		$dstHeight = $frameHeight;
+
+		if (($frameWidth > $imageWidth) && ($frameHeight > $imageHeight)) {
+			// image is smaller than the frame. Don't scale and return the original image size
+			$dstWidth = $imageWidth;
+			$dstHeight = $imageHeight;
+		}
+
+		return array(
+			'width' => $dstWidth,
+			'height' => $dstHeight
+		);
 	}
 
 	/**
