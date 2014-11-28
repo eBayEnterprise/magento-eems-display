@@ -126,6 +126,7 @@ class EbayEnterprise_Display_Model_Products
 		// $imageUrl should be the URL of a valid image or an empty string but some customers are reporting invalid URLs
 		// in their feed so we add one last check. Make sure we really do have a valid URL or return an empty string if we don't
 		if (!$this->_helper->isValidImage($imageUrl)) {
+			Mage::log("Invalid image: $imageUrl");
 			$imageUrl = '';
 		}
 

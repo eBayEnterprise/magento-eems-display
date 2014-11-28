@@ -176,7 +176,7 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 
 			$dstWidth = $frameWidth;
 			$dstHeight = $frameHeight;
-			
+
 			$image = Mage::helper('catalog/image');
 			$image->init($product, 'image');
 
