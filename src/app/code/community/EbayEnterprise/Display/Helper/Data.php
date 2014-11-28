@@ -168,24 +168,28 @@ class EbayEnterprise_Display_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function imageSizeForFeed(Mage_Catalog_Model_Product $product, $storeId)
 	{
-		$config = Mage::helper('eems_display/config');
+		try {
+			$config = Mage::helper('eems_display/config');
 
-		$frameWidth = $config->getFeedImageWidth($storeId);
-		$frameHeight = $config->getFeedImageHeight($storeId);
+			$frameWidth = $config->getFeedImageWidth($storeId);
+			$frameHeight = $config->getFeedImageHeight($storeId);
 
-		$image = Mage::helper('catalog/image');
-		$image->init($product, 'image');
+			$dstWidth = $frameWidth;
+			$dstHeight = $frameHeight;
+			
+			$image = Mage::helper('catalog/image');
+			$image->init($product, 'image');
 
-		$imageWidth = $image->getOriginalWidth();
-		$imageHeight = $image->getOriginalHeight();
+			$imageWidth = $image->getOriginalWidth();
+			$imageHeight = $image->getOriginalHeight();
 
-		$dstWidth  = $frameWidth;
-		$dstHeight = $frameHeight;
-
-		if (($frameWidth > $imageWidth) && ($frameHeight > $imageHeight)) {
-			// image is smaller than the frame. Don't scale and return the original image size
-			$dstWidth = $imageWidth;
-			$dstHeight = $imageHeight;
+			if (($frameWidth > $imageWidth) && ($frameHeight > $imageHeight)) {
+				// image is smaller than the frame. Don't scale and return the original image size
+				$dstWidth = $imageWidth;
+				$dstHeight = $imageHeight;
+			}
+		} catch (Exception $e) {
+			Mage::log("imageSizeForFeed error: {$e->getMessage()}");
 		}
 
 		return array(
